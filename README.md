@@ -67,7 +67,7 @@ volume, and Do Not Disturb still apply.
 
 ## Phone contact icons
 
-Original game textures used by v1.5.1. Prix Luxury has no verified phone
+Original game textures used by v1.6.1. Prix Luxury has no verified phone
 icon in this catalog and shows no avatar.
 
 <table>
@@ -77,25 +77,29 @@ icon in this catalog and shows no avatar.
 <tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_franklin.png" width="64" height="64" alt="Franklin phone icon"><br>Franklin</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_lamar.png" width="64" height="64" alt="Lamar phone icon"><br>Lamar</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_gerald.png" width="64" height="64" alt="Gerald phone icon"><br>Gerald</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_junkenergy.png" width="64" height="64" alt="Junk Energy phone icon"><br>Junk Energy</td></tr>
 </table>
 
-## v1.5 previews
+## v1.6.1 previews
 
-Feature illustrations of the contact catalog and notification behavior.
-These are previews, not device screenshots.
+Feature illustrations using the app's original contact artwork, not device screenshots.
+Contacts are collapsible, and **Customize app icon** opens a grid of 19 contact icons.
+Version 1.6.1 uses adaptive launcher icons so the picture fills the launcher mask
+without the added white frame. Your launcher controls the final shape; notification
+header icons still depend on your phone.
 
 <table>
-  <tr><th>Contacts</th><th>Messages</th></tr>
+  <tr><th>Collapsible contacts & settings</th><th>Contact icon picker</th><th>Full-picture launcher icons</th></tr>
   <tr>
-    <td><img src="play-release/graphics/v1.5-contacts.svg" alt="v1.5 contact choices and individual toggles" width="360"></td>
-    <td><img src="play-release/graphics/v1.5-messages.svg" alt="v1.5 separate sender notifications with verified text excerpts" width="360"></td>
+    <td><img src="play-release/graphics/v1.6.1-settings.png" alt="v1.6.1 settings with collapsed contacts and Customize app icon button" width="300"></td>
+    <td><img src="play-release/graphics/v1.6.1-icon-picker.png" alt="v1.6.1 grid of 19 original contact icons" width="300"></td>
+    <td><img src="play-release/graphics/v1.6.1-launcher-icons.png" alt="v1.6.1 contact pictures filling rounded launcher icons without added white padding" width="300"></td>
   </tr>
 </table>
 
-### Android notification capture
+### Earlier Android notification capture
 
-Actual expanded Simeon notification captured on Android 15. This existing
-capture demonstrates the Simeon appearance retained in v1.5.
+Expanded Simeon notification captured on Android 15 before the current icon update.
+This historical capture shows the notification layout, not the v1.6.1 launcher icon.
 
-<img src="play-release/graphics/03-notification.png" alt="Expanded Simeon notification with portrait and five-vehicle request" width="360">
+<img src="play-release/graphics/03-notification.png" alt="Earlier expanded Simeon notification with portrait and five-vehicle request" width="360">
 
 ## Build from source
 
