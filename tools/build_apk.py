@@ -38,7 +38,7 @@ def main():
     run(TOOLS/'aapt2', 'link', '-o', BUILD/'resources.apk', '-I', ANDROID,
         '--manifest', manifest, '--java', BUILD/'generated',
         '--min-sdk-version', '26', '--target-sdk-version', '36',
-        '--version-code', '6', '--version-name', '1.5', '--auto-add-overlay',
+        '--version-code', '7', '--version-name', '1.5.1', '--auto-add-overlay',
         *sorted((BUILD/'resources').glob('*.flat')))
     sources = sorted((SOURCE/'java').rglob('*.java')) + sorted((BUILD/'generated').rglob('*.java'))
     run('java','-m','jdk.compiler/com.sun.tools.javac.Main','-encoding','UTF-8',

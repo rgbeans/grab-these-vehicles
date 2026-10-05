@@ -101,7 +101,7 @@ Descriptions identify text/email origins and short excerpts. Formatting control
 codes are removed; the quoted spelling and punctuation are retained. Longer
 dialogue is not rewritten or passed off as a complete original message.
 Unverified intros, generic vehicle stock announcements, and call-only dialogue
-are excluded. New contacts use letter avatars; Simeon's portrait remains.
+are excluded. Phone icons are documented below.
 
 Each contact has its own toggle, notification ID, message shuffle bag, and copy
 PendingIntent. The same contact may send consecutively. Its replacement uses
@@ -129,3 +129,24 @@ The added service and collectible introductions can occur after an initial
 purchase or encounter; they are not all messages to players who own nothing.
 All original contact indices stay unchanged so existing preferences and
 notification IDs survive an update. New contacts are appended.
+
+## Phone icons (v1.5.1)
+
+Original 64×64 GTA phone/notification textures from the
+[game texture catalog](https://github.com/SwitchNetwork/fivem-wiki/wiki/Advanced-Notifications),
+cross-checked against the [RAGE notification texture list](https://wiki.rage.mp/wiki/Notification_Pictures)
+and English phone picture labels. The complete per-contact asset names and
+pinned source URLs are recorded in [contact-icons.json](play-release/contact-icons.json).
+Assets are decoded and saved losslessly as PNG; no portraits or logos are generated.
+
+Lester uses CHAR_LESTER (the game's silhouette), not a character publicity
+portrait. Franklin and Lamar use their newer CHAR_FIXFRANKLIN / CHAR_FIXLAMAR
+phone assets. Maude retains her original bounty-hunting-era CHAR_MAUDE icon.
+Company assets include CHAR_MILSITE (Warstock), CHAR_BANK_MAZE (Maze Bank),
+CHAR_MP_MORS_MUTUAL, CHAR_PEGASUS_DELIVERY and CHAR_GANGAPP (SecuroServ).
+Junk Energy uses CHAR_JUNK_JUMP.
+
+No phone-contact image was verified for Prix Luxury's email sender. It uses no
+large notification avatar and no contact-row image rather than an unrelated
+website logo or a fabricated portrait. The catalog contains 19 verified assets
+for 20 message senders. Artwork belongs to Rockstar Games / Take-Two.

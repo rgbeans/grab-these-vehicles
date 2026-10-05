@@ -41,7 +41,8 @@ certificate as earlier personal releases, so it can update those installations.
 - Choose a contact for immediate test notifications.
 - Each contact keeps a separate notification. Repeat messages replace only that
   contact's notification and alert again according to Android's sound settings.
-- Sender names and letter avatars in notifications (Simeon retains his portrait).
+- Original phone portraits and company icons in notifications and contact settings.
+  Prix Luxury has no verified phone icon in this catalog and shows no avatar.
 - Elapsed-time alarms, reboot restoration, and hourly background alarm recovery.
 - Background, battery, unused-app, and privacy guidance in the app.
 
@@ -60,6 +61,18 @@ Android can delay alarms and jobs under power restrictions. A force-stopped or
 hibernated app cannot run until Android permits it again. Reopen after a force stop.
 Notifications run throughout the day and night. Android silent mode, notification
 volume, and Do Not Disturb still apply.
+
+## Phone contact icons
+
+Original game textures used by v1.5.1. Prix Luxury has no verified phone
+icon in this catalog and shows no avatar.
+
+<table>
+<tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_simeon.png" width="64" height="64" alt="Simeon phone icon"><br>Simeon</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_warstock.png" width="64" height="64" alt="Warstock phone icon"><br>Warstock</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_pavel.png" width="64" height="64" alt="Pavel phone icon"><br>Pavel</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_lester.png" width="64" height="64" alt="Lester phone icon"><br>Lester</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_tony.png" width="64" height="64" alt="Tony phone icon"><br>Tony</td></tr>
+<tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_kdj.png" width="64" height="64" alt="KDJ phone icon"><br>KDJ</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_agent14.png" width="64" height="64" alt="Agent 14 phone icon"><br>Agent 14</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_bryony.png" width="64" height="64" alt="Bryony phone icon"><br>Bryony</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_ron.png" width="64" height="64" alt="Ron phone icon"><br>Ron</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_mazebank.png" width="64" height="64" alt="Maze Bank phone icon"><br>Maze Bank</td></tr>
+<tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_miguel.png" width="64" height="64" alt="Miguel Madrazo phone icon"><br>Miguel Madrazo</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_maude.png" width="64" height="64" alt="Maude phone icon"><br>Maude</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_mors.png" width="64" height="64" alt="Mors Mutual phone icon"><br>Mors Mutual</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_pegasus.png" width="64" height="64" alt="Pegasus phone icon"><br>Pegasus</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_securoserv.png" width="64" height="64" alt="SecuroServ phone icon"><br>SecuroServ</td></tr>
+<tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_franklin.png" width="64" height="64" alt="Franklin phone icon"><br>Franklin</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_lamar.png" width="64" height="64" alt="Lamar phone icon"><br>Lamar</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_gerald.png" width="64" height="64" alt="Gerald phone icon"><br>Gerald</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_junkenergy.png" width="64" height="64" alt="Junk Energy phone icon"><br>Junk Energy</td></tr>
+</table>
 
 ## v1.5 previews
 

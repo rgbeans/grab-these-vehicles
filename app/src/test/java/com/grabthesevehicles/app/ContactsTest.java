@@ -63,7 +63,13 @@ public class ContactsTest {
             assertEquals(ContactMessages.NAMES[c],n.extras.getString(Notification.EXTRA_TITLE));
             assertEquals(RequestScheduler.prefs(app).getString("last_message",""),
                 Shadows.shadowOf(n.contentIntent).getSavedIntent().getStringExtra(CopyMessageActivity.MESSAGE));
-            assertNotNull(n.getLargeIcon());
+            int icon = ContactIcons.resource(c);
+            if (icon == 0) assertNull(n.getLargeIcon());
+            else {
+                assertNotNull(n.getLargeIcon());
+                assertEquals(icon,n.getLargeIcon().getResId());
+                assertNotNull(android.graphics.BitmapFactory.decodeResource(app.getResources(),icon));
+            }
         }
     }
     @Test public void contactsKeepSeparateNotificationsAndReplacementAlertsAgain() {

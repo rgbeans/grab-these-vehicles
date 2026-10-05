@@ -1,0 +1,116 @@
+[
+  {
+    "contact": "simeon",
+    "texture": "CHAR_SIMEON",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_SIMEON.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_simeon.png"
+  },
+  {
+    "contact": "warstock",
+    "texture": "CHAR_MILSITE",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MILSITE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_warstock.png"
+  },
+  {
+    "contact": "pavel",
+    "texture": "CHAR_PAVEL",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_PAVEL.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_pavel.png"
+  },
+  {
+    "contact": "lester",
+    "texture": "CHAR_LESTER",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_LESTER.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_lester.png"
+  },
+  {
+    "contact": "tony",
+    "texture": "CHAR_TONY_PRINCE",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_TONY_PRINCE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_tony.png"
+  },
+  {
+    "contact": "kdj",
+    "texture": "CHAR_KDJ",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_KDJ.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_kdj.png"
+  },
+  {
+    "contact": "agent14",
+    "texture": "CHAR_AGENT14",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_AGENT14.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_agent14.png"
+  },
+  {
+    "contact": "bryony",
+    "texture": "CHAR_BRYONY",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_BRYONY.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_bryony.png"
+  },
+  {
+    "contact": "ron",
+    "texture": "CHAR_RON",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_RON.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_ron.png"
+  },
+  {
+    "contact": "mazebank",
+    "texture": "CHAR_BANK_MAZE",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_BANK_MAZE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_mazebank.png"
+  },
+  {
+    "contact": "miguel",
+    "texture": "CHAR_MIGUEL_MADROZA",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MIGUEL_MADROZA.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_miguel.png"
+  },
+  {
+    "contact": "maude",
+    "texture": "CHAR_MAUDE",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MAUDE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_maude.png"
+  },
+  {
+    "contact": "mors",
+    "texture": "CHAR_MP_MORS_MUTUAL",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MP_MORS_MUTUAL.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_mors.png"
+  },
+  {
+    "contact": "pegasus",
+    "texture": "CHAR_PEGASUS_DELIVERY",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_PEGASUS_DELIVERY.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_pegasus.png"
+  },
+  {
+    "contact": "securoserv",
+    "texture": "CHAR_GANGAPP",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_GANGAPP.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_securoserv.png"
+  },
+  {
+    "contact": "franklin",
+    "texture": "CHAR_FIXFRANKLIN",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_FIXFRANKLIN.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_franklin.png"
+  },
+  {
+    "contact": "lamar",
+    "texture": "CHAR_FIXLAMAR",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_FIXLAMAR.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_lamar.png"
+  },
+  {
+    "contact": "gerald",
+    "texture": "CHAR_MP_GERALD",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MP_GERALD.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_gerald.png"
+  },
+  {
+    "contact": "junkenergy",
+    "texture": "CHAR_JUNK_JUMP",
+    "source": "https://github.com/SwitchNetwork/fivem-wiki/blob/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_JUNK_JUMP.PNG",
+    "file": "app/src/main/res/drawable-nodpi/contact_junkenergy.png"
+  }
+]

@@ -43,6 +43,7 @@ public final class MainActivity extends Activity {
     private EditText minInput, maxInput;
     private TextView deliveryStatus, requestBody, requestLabel, timingStatus, backgroundStatus, copyHint, requestSender;
     private LinearLayout messageCard;
+    private ImageView requestAvatar;
     private Button notificationAccess, preciseAccess;
     private boolean updating, testAfterPermission;
     private final Handler handler = new Handler();
@@ -118,7 +119,7 @@ public final class MainActivity extends Activity {
 
         LinearLayout contact = new LinearLayout(this); contact.setGravity(Gravity.CENTER_VERTICAL);
         contact.setPadding(dp(16),dp(18),dp(16),dp(18)); contact.setBackground(surface(CARD,16,true));
-        ImageView avatar = new ImageView(this); avatar.setImageResource(R.drawable.simeon_face);
+        ImageView avatar = new ImageView(this); avatar.setImageResource(R.drawable.contact_simeon);
         avatar.setScaleType(ImageView.ScaleType.CENTER_CROP); avatar.setContentDescription("Simeon Yetarian");
         avatar.setBackground(surface(CARD,32,false)); avatar.setClipToOutline(true);
         contact.addView(avatar,params(56,56));
@@ -154,7 +155,18 @@ public final class MainActivity extends Activity {
                 RequestScheduler.prefs(this).edit().putBoolean("contact_" + ContactMessages.IDS[contactIndex], checked).commit();
                 refreshState();
             });
-            root.addView(toggle,params(-1,-2));
+            LinearLayout row = new LinearLayout(this); row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(10),0,0,0); row.setBackground(surface(CARD,12,true));
+            int icon = ContactIcons.resource(i);
+            if (icon != 0) {
+                ImageView picture = new ImageView(this); picture.setImageResource(icon);
+                picture.setContentDescription(ContactMessages.NAMES[i] + " phone icon");
+                picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                row.addView(picture,params(40,40));
+            }
+            toggle.setBackgroundColor(Color.TRANSPARENT);
+            row.addView(toggle,new LinearLayout.LayoutParams(0,-2,1));
+            root.addView(row,params(-1,-2));
         }
         space(root,24);
 
@@ -166,7 +178,12 @@ public final class MainActivity extends Activity {
         });
         requestLabel = text("NOTIFICATION PREVIEW",10,AMBER,true); requestLabel.setLetterSpacing(0.12f);
         message.addView(requestLabel); space(message,12);
-        requestSender = text("Simeon",16,TEXT,true); message.addView(requestSender); space(message,7);
+        LinearLayout senderRow = new LinearLayout(this); senderRow.setGravity(Gravity.CENTER_VERTICAL);
+        requestAvatar = new ImageView(this); requestAvatar.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        senderRow.addView(requestAvatar,params(40,40));
+        requestSender = text("Simeon",16,TEXT,true); requestSender.setPadding(dp(12),0,0,0);
+        senderRow.addView(requestSender,new LinearLayout.LayoutParams(0,-2,1));
+        message.addView(senderRow); space(message,7);
         requestBody = text(VehicleMessages.preview(),15,TEXT,false); requestBody.setLineSpacing(dp(3),1);
         message.addView(requestBody); root.addView(message,params(-1,-2));
         space(root,10); copyHint = text("Your latest request will appear here.",12,MUTED,false); root.addView(copyHint);
@@ -313,6 +330,10 @@ public final class MainActivity extends Activity {
         notificationAccess.setPadding(dp(12),dp(10),dp(12),dp(10));
         requestLabel.setText(last == 0 ? "NOTIFICATION PREVIEW" : "LAST REQUEST · " + DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(last)));
         requestSender.setText(p.getString("last_sender","Simeon"));
+        int contact = p.getInt("last_contact",0), icon = ContactIcons.resource(contact);
+        requestAvatar.setVisibility(icon == 0 ? View.GONE : View.VISIBLE);
+        if (icon != 0) requestAvatar.setImageResource(icon);
+        requestAvatar.setContentDescription(requestSender.getText() + " phone icon");
         requestBody.setText(p.getString("last_message",VehicleMessages.preview()));
         boolean hasMessage = last > 0 && p.contains("last_message");
         messageCard.setClickable(hasMessage); messageCard.setFocusable(hasMessage);

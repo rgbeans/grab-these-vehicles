@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
@@ -30,7 +29,7 @@ public final class SimeonNotifications {
         if (manager.getNotificationChannel(CHANNEL) != null) {
             NotificationChannel existing = manager.getNotificationChannel(CHANNEL);
             existing.setName("GTA Online contacts");
-            existing.setDescription("Messages from Simeon, Warstock, Paige, Lester and Prix Luxury");
+            existing.setDescription("Scheduled texts and emails from your selected GTA Online contacts");
             manager.createNotificationChannel(existing);
             return;
         }
@@ -39,7 +38,7 @@ public final class SimeonNotifications {
         if (old == null) old = manager.getNotificationChannel(LEGACY_CHANNEL);
         int importance = old == null ? NotificationManager.IMPORTANCE_HIGH : old.getImportance();
         NotificationChannel channel = new NotificationChannel(CHANNEL, "GTA Online contacts", importance);
-        channel.setDescription("Messages from Simeon, Warstock, Paige, Lester and Prix Luxury");
+        channel.setDescription("Scheduled texts and emails from your selected GTA Online contacts");
         channel.setSound(soundUri(c),new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
@@ -68,9 +67,8 @@ public final class SimeonNotifications {
             new Intent(c, CopyMessageActivity.class).putExtra(CopyMessageActivity.MESSAGE,message)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        Notification notification = new Notification.Builder(c, CHANNEL)
+        Notification.Builder builder = new Notification.Builder(c, CHANNEL)
             .setSmallIcon(R.drawable.ic_message)
-            .setLargeIcon(senderIndex == 0 ? BitmapFactory.decodeResource(c.getResources(), R.drawable.simeon_face) : contactIcon(sender))
             .setContentTitle(sender)
             .setContentText(message)
             .setStyle(new Notification.BigTextStyle().setBigContentTitle(sender).bigText(message))
@@ -81,20 +79,11 @@ public final class SimeonNotifications {
             .setOnlyAlertOnce(false)
             .setShowWhen(true)
             .setWhen(System.currentTimeMillis())
-            .setVisibility(Notification.VISIBILITY_PUBLIC)
-            .build();
+            .setVisibility(Notification.VISIBILITY_PUBLIC);
+        int icon = ContactIcons.resource(senderIndex);
+        if (icon != 0) builder.setLargeIcon(android.graphics.drawable.Icon.createWithResource(c, icon));
+        Notification notification = builder.build();
         try { c.getSystemService(NotificationManager.class).notify(100 + senderIndex, notification); return true; }
         catch (SecurityException denied) { return false; }
     }
-    private static android.graphics.Bitmap contactIcon(String sender) {
-        android.graphics.Bitmap icon = android.graphics.Bitmap.createBitmap(128, 128, android.graphics.Bitmap.Config.ARGB_8888);
-        android.graphics.Canvas canvas = new android.graphics.Canvas(icon);
-        canvas.drawColor(Color.rgb(37, 31, 24));
-        android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.rgb(255, 176, 71)); paint.setTextSize(68);
-        paint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD); paint.setTextAlign(android.graphics.Paint.Align.CENTER);
-        canvas.drawText(sender.substring(0, 1), 64, 64 - (paint.ascent() + paint.descent()) / 2, paint);
-        return icon;
-    }
-
 }
