@@ -61,21 +61,23 @@ hibernated app cannot run until Android permits it again. Reopen after a force s
 Notifications run throughout the day and night. Android silent mode, notification
 volume, and Do Not Disturb still apply.
 
-## Screenshots
+## v1.5 previews
 
-App previews rendered from the Android view hierarchy.
+Feature illustrations of the contact catalog and notification behavior.
+These are previews, not device screenshots.
 
 <table>
-  <tr><th>Latest request</th><th>Settings</th></tr>
+  <tr><th>Contacts</th><th>Messages</th></tr>
   <tr>
-    <td><img src="play-release/graphics/01-requests.png" alt="Latest vehicle request" width="320"></td>
-    <td><img src="play-release/graphics/02-settings.png" alt="Notification and interval settings" width="320"></td>
+    <td><img src="play-release/graphics/v1.5-contacts.svg" alt="v1.5 contact choices and individual toggles" width="360"></td>
+    <td><img src="play-release/graphics/v1.5-messages.svg" alt="v1.5 separate sender notifications with verified text excerpts" width="360"></td>
   </tr>
 </table>
 
-### Notification
+### Android notification capture
 
-Actual expanded notification captured on Android 15.
+Actual expanded Simeon notification captured on Android 15. This existing
+capture demonstrates the Simeon appearance retained in v1.5.
 
 <img src="play-release/graphics/03-notification.png" alt="Expanded Simeon notification with portrait and five-vehicle request" width="360">
 
