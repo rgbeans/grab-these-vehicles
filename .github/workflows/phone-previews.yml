@@ -1,0 +1,52 @@
+name: Capture Android previews
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/phone-previews.yml'
+      - 'tools/capture_previews.py'
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build the unchanged app
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "emulator" "system-images;android-35;google_apis;x86_64"
+          ./gradlew --no-daemon assembleDebug
+      - name: Boot Android 15
+        run: |
+          sudo chmod 666 /dev/kvm
+          echo no | avdmanager create avd --force --name previews --package "system-images;android-35;google_apis;x86_64" --device pixel_6
+          "$ANDROID_HOME/emulator/emulator" -avd previews -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > /tmp/emulator.log 2>&1 &
+          adb wait-for-device
+          for attempt in $(seq 1 180); do
+            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; then break; fi
+            sleep 2
+          done
+          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
+          adb install -r app/build/outputs/apk/debug/app-debug.apk
+      - name: Capture app screens and notification
+        run: python3 tools/capture_previews.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v1.6.1-actual-screenshots
+          path: build/phone-previews/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Emulator diagnostics
+        if: failure()
+        run: |
+          tail -100 /tmp/emulator.log || true
+          adb logcat -d -t 200 || true
