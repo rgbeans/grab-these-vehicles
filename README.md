@@ -37,7 +37,10 @@ certificate as earlier personal releases, so it can update those installations.
 - Tap a notification to copy its exact text, or tap the latest-request card in the app.
 - Bundled GTA notification sound and a direct button for Android's sound,
   vibration, and notification settings.
+- Collapsible contact switches show the enabled count and remember expansion state.
 - Enable or disable each contact, plus a global pause/resume switch.
+- Customize the home-screen app icon from a grid of 19 original contact icons.
+  Notification header branding remains dependent on the phone; sender icons stay separate.
 - Choose a contact for immediate test notifications.
 - Each contact keeps a separate notification. Repeat messages replace only that
   contact's notification and alert again according to Android's sound settings.

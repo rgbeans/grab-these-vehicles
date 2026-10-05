@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
@@ -42,7 +43,8 @@ public final class MainActivity extends Activity {
     private Switch enabledSwitch;
     private EditText minInput, maxInput;
     private TextView deliveryStatus, requestBody, requestLabel, timingStatus, backgroundStatus, copyHint, requestSender;
-    private LinearLayout messageCard;
+    private LinearLayout messageCard, contactsList;
+    private Button contactsButton;
     private ImageView requestAvatar;
     private Button notificationAccess, preciseAccess;
     private boolean updating, testAfterPermission;
@@ -98,6 +100,53 @@ public final class MainActivity extends Activity {
         return b;
     }
 
+    private void refreshContacts() {
+        int enabled=0;
+        for(int i=0;i<ContactMessages.IDS.length;i++) if(RequestScheduler.contactEnabled(this,i)) enabled++;
+        boolean expanded=RequestScheduler.prefs(this).getBoolean("contacts_expanded",false);
+        contactsList.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        contactsButton.setText("Contacts · "+enabled+"/"+ContactMessages.IDS.length+" enabled "+(expanded ? "▴" : "▾"));
+        contactsButton.setContentDescription((expanded ? "Collapse" : "Expand")+" contacts, "+enabled+" enabled");
+    }
+    private void chooseAppIcon() {
+        LinearLayout content=column(); content.setPadding(dp(12),dp(8),dp(12),dp(8));
+        TextView hint=text("Changes your home-screen icon. Notification header icons depend on your phone. The launcher may take a moment to refresh.",13,MUTED,false);
+        hint.setPadding(dp(6),0,dp(6),dp(12)); content.addView(hint);
+        GridLayout grid=new GridLayout(this); grid.setColumnCount(3); content.addView(grid,params(-1,-2));
+        ScrollView scroll=new ScrollView(this); scroll.addView(content);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Customize app icon")
+            .setView(scroll).setNegativeButton("Cancel",null).create();
+        int current=LauncherIcons.selected(this), cell=0;
+        for(int i=0;i<ContactMessages.IDS.length;i++) {
+            int icon=ContactIcons.resource(i); if(icon==0) continue;
+            final int contact=i;
+            LinearLayout tile=column(); tile.setGravity(Gravity.CENTER); tile.setPadding(dp(4),dp(8),dp(4),dp(8));
+            GradientDrawable background=surface(CARD,12,true);
+            if(i==current) background.setStroke(dp(2),AMBER);
+            tile.setBackground(background); tile.setClickable(true); tile.setFocusable(true);
+            tile.setContentDescription("Use "+ContactMessages.NAMES[i]+" app icon"+(i==current ? ", selected" : ""));
+            ImageView picture=new ImageView(this); picture.setImageResource(icon); picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            tile.addView(picture,params(56,56));
+            TextView label=text(ContactMessages.NAMES[i],11,i==current ? AMBER : TEXT,false);
+            label.setGravity(Gravity.CENTER); label.setMaxLines(2); tile.addView(label,params(-1,34));
+            tile.setOnClickListener(v -> {
+                try {
+                    LauncherIcons.select(this,contact);
+                    dialog.dismiss();
+                    Toast.makeText(this,"App icon set to "+ContactMessages.NAMES[contact],Toast.LENGTH_SHORT).show();
+                } catch (RuntimeException error) {
+                    Toast.makeText(this,"Could not change the app icon. Try again.",Toast.LENGTH_LONG).show();
+                }
+            });
+            GridLayout.LayoutParams layout=new GridLayout.LayoutParams(GridLayout.spec(cell/3),GridLayout.spec(cell%3,1f));
+            layout.width=0; layout.height=dp(112); layout.setMargins(dp(4),dp(4),dp(4),dp(4));
+            grid.addView(tile,layout); cell++;
+        }
+        dialog.show();
+        scroll.getLayoutParams().height=dp(Math.min(480,getResources().getDisplayMetrics().heightPixels/getResources().getDisplayMetrics().density*0.6f));
+        scroll.requestLayout();
+    }
+
     private void buildScreen() {
         getWindow().setStatusBarColor(BG); getWindow().setNavigationBarColor(BG);
         ScrollView scroll = new ScrollView(this); scroll.setBackgroundColor(BG); scroll.setFillViewport(true);
@@ -140,12 +189,21 @@ public final class MainActivity extends Activity {
         space(root,12);
         deliveryStatus = text("",13,MUTED,false); root.addView(deliveryStatus);
         space(root,24);
-        root.addView(text("Contacts",20,TEXT,true));
-        space(root,8);
-        root.addView(text("Choose who can message you. Purchase reminders and heist-ready notices use your chosen interval.",13,MUTED,false));
+        contactsButton = button("Contacts",false);
+        contactsButton.setOnClickListener(v -> {
+            boolean expanded = contactsList.getVisibility()!=View.VISIBLE;
+            RequestScheduler.prefs(this).edit().putBoolean("contacts_expanded",expanded).commit();
+            refreshContacts();
+        });
+        root.addView(contactsButton,params(-1,-2));
+        contactsList = column();
+        contactsList.setVisibility(RequestScheduler.prefs(this).getBoolean("contacts_expanded",false) ? View.VISIBLE : View.GONE);
+        root.addView(contactsList,params(-1,-2));
+        space(contactsList,8);
+        contactsList.addView(text("Choose who can message you.",13,MUTED,false));
         for (int i = 0; i < ContactMessages.IDS.length; i++) {
             final int contactIndex = i;
-            space(root,10);
+            space(contactsList,10);
             Switch toggle = new Switch(this);
             toggle.setText(ContactMessages.NAMES[i] + "\n" + ContactMessages.DESCRIPTIONS[i]);
             toggle.setTextColor(TEXT); toggle.setTextSize(14); toggle.setPadding(dp(14),dp(12),dp(14),dp(12));
@@ -166,7 +224,7 @@ public final class MainActivity extends Activity {
             }
             toggle.setBackgroundColor(Color.TRANSPARENT);
             row.addView(toggle,new LinearLayout.LayoutParams(0,-2,1));
-            root.addView(row,params(-1,-2));
+            contactsList.addView(row,params(-1,-2));
         }
         space(root,24);
 
@@ -212,6 +270,10 @@ public final class MainActivity extends Activity {
         sound.setOnClickListener(v -> launchSettings(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
             .putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,SimeonNotifications.CHANNEL)));
         root.addView(sound,params(-1,-2));
+        space(root,10);
+        Button appIcon = button("Customize app icon",false);
+        appIcon.setOnClickListener(v -> chooseAppIcon());
+        root.addView(appIcon,params(-1,-2));
         space(root,22);
 
         notificationAccess = button("Allow notifications",false); notificationAccess.setOnClickListener(v -> askNotificationAccess(false));
@@ -315,6 +377,7 @@ public final class MainActivity extends Activity {
         }
     }
     private void refreshState() {
+        refreshContacts();
         if (enabledSwitch == null) return;
         SharedPreferences p = RequestScheduler.prefs(this);
         boolean enabled = RequestScheduler.enabled(this), allowed = SimeonNotifications.allowed(this);

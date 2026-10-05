@@ -150,3 +150,17 @@ No phone-contact image was verified for Prix Luxury's email sender. It uses no
 large notification avatar and no contact-row image rather than an unrelated
 website logo or a fabricated portrait. The catalog contains 19 verified assets
 for 20 message senders. Artwork belongs to Rockstar Games / Take-Two.
+
+## Launcher icon picker and collapsed contacts (v1.6)
+
+Contacts start collapsed and show an enabled count. Expansion and contact
+selections persist independently. The icon picker contains all 19 verified
+assets; Prix Luxury is omitted because it has no verified picture.
+
+Launcher icons use Android [activity aliases](https://developer.android.com/guide/topics/manifest/activity-alias-element).
+The target MainActivity always remains enabled. Android 13+ changes aliases
+atomically using [setComponentEnabledSettings](https://developer.android.com/reference/android/content/pm/PackageManager#setComponentEnabledSettings(java.util.List));
+older devices enable the replacement before disabling the previous aliases.
+The chosen icon changes the home-screen entry. Android/OEM notification-header
+branding may continue using the application icon and is not promised to change.
+Per-sender notification pictures remain independent of the launcher choice.
