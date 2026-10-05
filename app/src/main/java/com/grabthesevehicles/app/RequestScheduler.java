@@ -99,13 +99,29 @@ public final class RequestScheduler {
                 .setPeriodic(3_600_000L).setPersisted(true).build());
         }
     }
-    public static String nextMessage(Context c) {
+    public static boolean contactEnabled(Context c, int contact) {
+        return prefs(c).getBoolean("contact_" + ContactMessages.IDS[contact], true);
+    }
+    public static boolean hasContacts(Context c) {
+        for (int i = 0; i < ContactMessages.IDS.length; i++) if (contactEnabled(c, i)) return true;
+        return false;
+    }
+    public static String nextMessage(Context c) { return nextMessage(c, -1); }
+    public static String nextMessage(Context c, int requestedContact) {
         SharedPreferences p = prefs(c);
-        String stored = p.getString("bag", "");
-        int last = p.getInt("last_index", -1);
+        int contact = requestedContact;
+        if (contact < 0) {
+            java.util.ArrayList<Integer> active = new java.util.ArrayList<>();
+            for (int i = 0; i < ContactMessages.IDS.length; i++) if (contactEnabled(c, i)) active.add(i);
+            if (active.isEmpty()) return null;
+            contact = active.get(RANDOM.nextInt(active.size()));
+        }
+        String bagKey = contact == 0 ? "bag" : "bag_" + ContactMessages.IDS[contact];
+        String indexKey = contact == 0 ? "last_index" : "last_index_" + ContactMessages.IDS[contact];
+        String stored = p.getString(bagKey, "");
         if (stored.isEmpty()) {
             StringBuilder bag = new StringBuilder();
-            for (int i : IntervalPolicy.freshBag(VehicleMessages.count(), last, RANDOM)) {
+            for (int i : ContactMessages.count(contact) == 1 ? new int[]{0} : IntervalPolicy.freshBag(ContactMessages.count(contact), p.getInt(indexKey, -1), RANDOM)) {
                 if (bag.length() > 0) bag.append(',');
                 bag.append(i);
             }
@@ -113,8 +129,9 @@ public final class RequestScheduler {
         }
         String[] parts = stored.split(",", 2);
         int index = Integer.parseInt(parts[0]);
-        String message = VehicleMessages.message(index);
-        p.edit().putString("bag", parts.length > 1 ? parts[1] : "").putInt("last_index", index)
+        String message = ContactMessages.message(contact, index);
+        p.edit().putString(bagKey, parts.length > 1 ? parts[1] : "").putInt(indexKey, index)
+            .putInt("last_contact", contact).putString("last_sender", ContactMessages.NAMES[contact])
             .putString("last_message", message).putLong("last_at", System.currentTimeMillis()).commit();
         return message;
     }

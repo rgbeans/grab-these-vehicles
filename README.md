@@ -4,10 +4,14 @@
 
 # grab these vehicles
 
-Simeon has a job for you. Again.
+Your contacts have a job for you. Again.
 
-A native Android fan app that sends random **“Grab these vehicles”** notifications
-with five-vehicle lists, Simeon's portrait, and the GTA notification chime.
+A native Android fan app with messages from **Simeon, Warstock Cache & Carry,
+Paige Harris, Lester, and Prix Luxury Real Estate**, with the GTA notification chime.
+Simeon's vehicle lists remain available. Added contacts use verified heist-ready
+and purchase reminders; Paige's call and Prix Luxury's email use short exact
+excerpts. Messages are simulated offline with no live game connection.
+See [SOURCES.md](SOURCES.md) for provenance.
 Works offline. No ads, accounts, analytics, or internet permission.
 
 **[Download for Android](https://github.com/rgbeans/grab-these-vehicles/releases)**
@@ -22,7 +26,11 @@ certificate as earlier personal releases, so it can update those installations.
 - Tap a notification to copy its exact text, or tap the latest-request card in the app.
 - Bundled GTA notification sound and a direct button for Android's sound,
   vibration, and notification settings.
-- Pause/resume and an immediate test notification.
+- Enable or disable each contact, plus a global pause/resume switch.
+- Choose a contact for immediate test notifications.
+- Each contact keeps a separate notification. Repeat messages replace only that
+  contact's notification and alert again according to Android's sound settings.
+- Sender names and letter avatars in notifications (Simeon retains his portrait).
 - Elapsed-time alarms, reboot restoration, and hourly background alarm recovery.
 - Background, battery, unused-app, and privacy guidance in the app.
 

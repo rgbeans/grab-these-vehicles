@@ -72,3 +72,18 @@ Android implementation references:
   https://robolectric.org/getting-started/
 - Google Play policies and publisher checklist:
   see `play-release/submission.md`.
+
+## v1.4 contact messages
+
+Retrieved 2026-10-05. The added contacts only use purchase reminders and heist-ready notices. Simeon's existing vehicle lists remain available. Messages are simulated offline, with no live game/account connection.
+
+| Contact | Origin | Included text |
+| --- | --- | --- |
+| Warstock | [GTA Wiki: Warstock Cache & Carry](https://gta.fandom.com/wiki/Warstock_Cache_%26_Carry), `WSTCKMAIL3` | Vehicle-service purchase promotion; formatting controls removed. |
+| Paige Harris | [GTA Wiki: Terrorbyte](https://gta.fandom.com/wiki/Terrorbyte) | Exact short sentence from her Terrorbyte purchase reminder call. Presented as a notification, rather than claiming it was originally SMS. |
+| Lester | [GTA V American Labels](https://gist.github.com/aaronlink127/afc889be7d52146a76bab72ede0512c7), `HPLESTER_TXT_R` | Exact Facility Planning Screen reminder for continuing the Doomsday Heist. |
+| Prix Luxury Real Estate | [GTA Wiki: Mansions](https://gta.fandom.com/wiki/Mansions) | Opening 25-word excerpt from its mansion promotion email, with an ellipsis. Identified as an excerpt in the contact list. |
+
+Generic vehicle-stock announcements and invented dialogue are excluded. New contacts use letter avatars; Simeon's existing portrait is retained.
+
+Each contact has a stable notification ID and separate copy PendingIntent. Reposting the same ID replaces that contact's old message, with `onlyAlertOnce=false`, so Android can alert again according to the existing channel sound and the user's sound/DND settings. Other contacts' notifications stay visible.

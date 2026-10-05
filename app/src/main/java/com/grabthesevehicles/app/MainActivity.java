@@ -41,7 +41,7 @@ public final class MainActivity extends Activity {
     private static final int TEXT = Color.rgb(245,243,238), MUTED = Color.rgb(165,165,174), AMBER = Color.rgb(255,176,71);
     private Switch enabledSwitch;
     private EditText minInput, maxInput;
-    private TextView deliveryStatus, requestBody, requestLabel, timingStatus, backgroundStatus, copyHint;
+    private TextView deliveryStatus, requestBody, requestLabel, timingStatus, backgroundStatus, copyHint, requestSender;
     private LinearLayout messageCard;
     private Button notificationAccess, preciseAccess;
     private boolean updating, testAfterPermission;
@@ -110,10 +110,10 @@ public final class MainActivity extends Activity {
         });
         LinearLayout root = column(); root.setPadding(dp(24),dp(24),dp(24),dp(28));
         scroll.addView(root,new ScrollView.LayoutParams(-1,-2));
-        TextView eyebrow = text("PREMIUM DELUXE MOTORSPORT",11,AMBER,true); eyebrow.setLetterSpacing(0.12f); root.addView(eyebrow);
+        TextView eyebrow = text("LOS SANTOS CONTACTS",11,AMBER,true); eyebrow.setLetterSpacing(0.12f); root.addView(eyebrow);
         space(root,10);
         root.addView(text("grab these vehicles",30,TEXT,true));
-        space(root,8); root.addView(text("Simeon has a job for you. Again.",14,MUTED,false));
+        space(root,8); root.addView(text("Your contacts have a job for you. Again.",14,MUTED,false));
         space(root,24);
 
         LinearLayout contact = new LinearLayout(this); contact.setGravity(Gravity.CENTER_VERTICAL);
@@ -123,10 +123,10 @@ public final class MainActivity extends Activity {
         avatar.setBackground(surface(CARD,32,false)); avatar.setClipToOutline(true);
         contact.addView(avatar,params(56,56));
         LinearLayout name = column(); name.setPadding(dp(14),0,dp(8),0);
-        name.addView(text("Simeon",21,TEXT,true)); space(name,6);
-        name.addView(text("Vehicle requests",13,MUTED,false));
+        name.addView(text("GTA Online contacts",21,TEXT,true)); space(name,6);
+        name.addView(text("Scheduled messages",13,MUTED,false));
         contact.addView(name,new LinearLayout.LayoutParams(0,-2,1));
-        enabledSwitch = new Switch(this); enabledSwitch.setContentDescription("Enable Simeon notifications");
+        enabledSwitch = new Switch(this); enabledSwitch.setContentDescription("Enable scheduled notifications");
         enabledSwitch.setThumbTintList(ColorStateList.valueOf(AMBER));
         enabledSwitch.setTrackTintList(new ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{Color.rgb(120,82,34),Color.rgb(65,65,73)}));
         contact.addView(enabledSwitch,params(-2,48)); root.addView(contact,params(-1,-2));
@@ -139,6 +139,24 @@ public final class MainActivity extends Activity {
         space(root,12);
         deliveryStatus = text("",13,MUTED,false); root.addView(deliveryStatus);
         space(root,24);
+        root.addView(text("Contacts",20,TEXT,true));
+        space(root,8);
+        root.addView(text("Choose who can message you. Purchase reminders and heist-ready notices use your chosen interval.",13,MUTED,false));
+        for (int i = 0; i < ContactMessages.IDS.length; i++) {
+            final int contactIndex = i;
+            space(root,10);
+            Switch toggle = new Switch(this);
+            toggle.setText(ContactMessages.NAMES[i] + "\n" + ContactMessages.DESCRIPTIONS[i]);
+            toggle.setTextColor(TEXT); toggle.setTextSize(14); toggle.setPadding(dp(14),dp(12),dp(14),dp(12));
+            toggle.setBackground(surface(CARD,12,true));
+            toggle.setChecked(RequestScheduler.contactEnabled(this,i));
+            toggle.setOnCheckedChangeListener((view,checked) -> {
+                RequestScheduler.prefs(this).edit().putBoolean("contact_" + ContactMessages.IDS[contactIndex], checked).commit();
+                refreshState();
+            });
+            root.addView(toggle,params(-1,-2));
+        }
+        space(root,24);
 
         LinearLayout message = column(); messageCard = message; message.setPadding(dp(18),dp(18),dp(18),dp(18));
         message.setBackground(surface(Color.rgb(37,31,24),16,false));
@@ -148,7 +166,7 @@ public final class MainActivity extends Activity {
         });
         requestLabel = text("NOTIFICATION PREVIEW",10,AMBER,true); requestLabel.setLetterSpacing(0.12f);
         message.addView(requestLabel); space(message,12);
-        message.addView(text("Simeon",16,TEXT,true)); space(message,7);
+        requestSender = text("Simeon",16,TEXT,true); message.addView(requestSender); space(message,7);
         requestBody = text(VehicleMessages.preview(),15,TEXT,false); requestBody.setLineSpacing(dp(3),1);
         message.addView(requestBody); root.addView(message,params(-1,-2));
         space(root,10); copyHint = text("Your latest request will appear here.",12,MUTED,false); root.addView(copyHint);
@@ -170,7 +188,7 @@ public final class MainActivity extends Activity {
         Button save = button("Save intervals",true); save.setOnClickListener(v -> saveIntervals()); root.addView(save,params(-1,-2));
         space(root,10);
         Button test = button("Send a test notification",false);
-        test.setOnClickListener(v -> { if (SimeonNotifications.allowed(this)) sendTest(); else askNotificationAccess(true); });
+        test.setOnClickListener(v -> { if (SimeonNotifications.allowed(this)) chooseTestContact(); else askNotificationAccess(true); });
         root.addView(test,params(-1,-2));
         space(root,10);
         Button sound = button("Sound & notification settings",false);
@@ -192,7 +210,7 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 30) {
             Button unused = button("Unused-app settings",false);
             unused.setOnClickListener(v -> {
-                new AlertDialog.Builder(this).setTitle("Keep Simeon's requests running")
+                new AlertDialog.Builder(this).setTitle("Keep contact messages running")
                     .setMessage("In App info, turn off “Pause app activity if unused” (or “Remove permissions if app isn't used”). This allows the app to keep working even when you don't open it for a long time.")
                     .setPositiveButton("Open settings",(dialog,which) -> startActivityForResult(
                         new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,Uri.parse("package:"+getPackageName())),21))
@@ -207,7 +225,7 @@ public final class MainActivity extends Activity {
             .setNegativeButton("Cancel",null).show());
         root.addView(battery,params(-1,-2));
         space(root,20);
-        TextView footer = text("16 vehicle lists. Works offline.\nUnofficial fan app.",12,MUTED,false);
+        TextView footer = text("5 contacts · heist-ready & purchase reminders.\nWorks offline. No live game connection.\nUnofficial fan app.",12,MUTED,false);
         footer.setGravity(Gravity.CENTER); footer.setLineSpacing(dp(4),1); root.addView(footer,params(-1,-2));
         space(root,10);
         Button privacy = button("Privacy",false);
@@ -243,9 +261,15 @@ public final class MainActivity extends Activity {
         }
     }
     private void sendTest() {
-        if (SimeonNotifications.deliver(this)) Toast.makeText(this,"Simeon sent you a message",Toast.LENGTH_SHORT).show();
-        else Toast.makeText(this,"Enable notifications for Simeon in Android settings",Toast.LENGTH_LONG).show();
-        refreshState();
+        chooseTestContact();
+    }
+    private void chooseTestContact() {
+        new AlertDialog.Builder(this).setTitle("Who should contact you?")
+            .setItems(ContactMessages.NAMES, (dialog,which) -> {
+                if (SimeonNotifications.deliver(this,which)) Toast.makeText(this,ContactMessages.NAMES[which] + " sent you a message",Toast.LENGTH_SHORT).show();
+                else Toast.makeText(this,"Enable notifications in Android settings",Toast.LENGTH_LONG).show();
+                refreshState();
+            }).setNegativeButton("Cancel",null).show();
     }
     private void askNotificationAccess(boolean thenTest) {
         testAfterPermission = thenTest;
@@ -279,7 +303,8 @@ public final class MainActivity extends Activity {
         boolean enabled = RequestScheduler.enabled(this), allowed = SimeonNotifications.allowed(this);
         updating = true; enabledSwitch.setChecked(enabled); updating = false;
         long next = RequestScheduler.nextWallTime(this), last = p.getLong("last_at",0);
-        if (!enabled) deliveryStatus.setText("Paused · Simeon will wait.");
+        if (!enabled) deliveryStatus.setText("Paused · your contacts will wait.");
+        else if (!RequestScheduler.hasContacts(this)) deliveryStatus.setText("No contacts selected. Enable a contact above.");
         else if (!allowed) deliveryStatus.setText("Notifications are blocked. Allow them below.");
         else if (next > System.currentTimeMillis()) deliveryStatus.setText("Active · next request around " + DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(next)));
         else deliveryStatus.setText("Active · waiting for Android to deliver the next request.");
@@ -287,10 +312,11 @@ public final class MainActivity extends Activity {
         notificationAccess.setVisibility(allowed ? View.GONE : View.VISIBLE);
         notificationAccess.setPadding(dp(12),dp(10),dp(12),dp(10));
         requestLabel.setText(last == 0 ? "NOTIFICATION PREVIEW" : "LAST REQUEST · " + DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(last)));
+        requestSender.setText(p.getString("last_sender","Simeon"));
         requestBody.setText(p.getString("last_message",VehicleMessages.preview()));
         boolean hasMessage = last > 0 && p.contains("last_message");
         messageCard.setClickable(hasMessage); messageCard.setFocusable(hasMessage);
-        messageCard.setContentDescription(hasMessage ? "Copy last Simeon request: " + requestBody.getText() : null);
+        messageCard.setContentDescription(hasMessage ? "Copy last message: " + requestBody.getText() : null);
         copyHint.setText(hasMessage ? "Tap this card or a notification to copy the message." : "Your latest request will appear here.");
         boolean exact = RequestScheduler.exactAllowed(this);
         timingStatus.setText(exact

@@ -45,7 +45,7 @@ public class AppTest {
     }
 
     @Test public void notificationTapCopiesItsExactMessage() {
-        assertTrue(SimeonNotifications.deliver(app));
+        assertTrue(SimeonNotifications.deliver(app,0));
         Notification n=app.getSystemService(NotificationManager.class).getActiveNotifications()[0].getNotification();
         String body=n.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString();
         assertTrue(body.startsWith("Grab these vehicles: "));

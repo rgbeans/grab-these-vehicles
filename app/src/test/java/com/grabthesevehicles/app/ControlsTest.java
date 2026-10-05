@@ -30,12 +30,12 @@ public class ControlsTest {
     }
 
     @Test public void cardCopiesTheExactMessageVisibleEvenIfANewerRequestArrives() {
-        SimeonNotifications.deliver(app);
+        SimeonNotifications.deliver(app,0);
         String shown=RequestScheduler.prefs(app).getString("last_message","");
         try(ActivityController<MainActivity> activity=Robolectric.buildActivity(MainActivity.class).setup()) {
             View card=(View)findText(activity.get().getWindow().getDecorView(),shown).getParent();
             assertTrue(card.isClickable());
-            SimeonNotifications.deliver(app);
+            SimeonNotifications.deliver(app,0);
             assertNotEquals(shown,RequestScheduler.prefs(app).getString("last_message",""));
             card.performClick();
             assertEquals(shown,app.getSystemService(ClipboardManager.class).getPrimaryClip().getItemAt(0).getText().toString());

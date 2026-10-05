@@ -27,13 +27,19 @@ public final class SimeonNotifications {
         try { SoundProvider.prepareAudio(c); }
         catch (IOException error) { throw new IllegalStateException("Cannot prepare the GTA notification sound", error); }
         NotificationManager manager = c.getSystemService(NotificationManager.class);
-        if (manager.getNotificationChannel(CHANNEL) != null) return;
+        if (manager.getNotificationChannel(CHANNEL) != null) {
+            NotificationChannel existing = manager.getNotificationChannel(CHANNEL);
+            existing.setName("GTA Online contacts");
+            existing.setDescription("Messages from Simeon, Warstock, Paige, Lester and Prix Luxury");
+            manager.createNotificationChannel(existing);
+            return;
+        }
         // Android channel sounds are immutable; a new channel also updates existing installations.
         NotificationChannel old = manager.getNotificationChannel(RESOURCE_SOUND_CHANNEL);
         if (old == null) old = manager.getNotificationChannel(LEGACY_CHANNEL);
         int importance = old == null ? NotificationManager.IMPORTANCE_HIGH : old.getImportance();
-        NotificationChannel channel = new NotificationChannel(CHANNEL, "Simeon · GTA Online", importance);
-        channel.setDescription("Grab these vehicles — with the GTA Online notification sound");
+        NotificationChannel channel = new NotificationChannel(CHANNEL, "GTA Online contacts", importance);
+        channel.setDescription("Messages from Simeon, Warstock, Paige, Lester and Prix Luxury");
         channel.setSound(soundUri(c),new AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
@@ -49,28 +55,46 @@ public final class SimeonNotifications {
         return manager.areNotificationsEnabled() && (channel == null || channel.getImportance() != NotificationManager.IMPORTANCE_NONE);
     }
     public static boolean deliver(Context c) {
+        return deliver(c, -1);
+    }
+    public static boolean deliver(Context c, int contact) {
         createChannel(c);
         if (!allowed(c)) return false;
-        String message = RequestScheduler.nextMessage(c);
-        PendingIntent open = PendingIntent.getActivity(c, 11,
+        String message = RequestScheduler.nextMessage(c, contact);
+        if (message == null) return false;
+        String sender = RequestScheduler.prefs(c).getString("last_sender", "Simeon");
+        int senderIndex = RequestScheduler.prefs(c).getInt("last_contact", 0);
+        PendingIntent open = PendingIntent.getActivity(c, 11 + senderIndex,
             new Intent(c, CopyMessageActivity.class).putExtra(CopyMessageActivity.MESSAGE,message)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new Notification.Builder(c, CHANNEL)
             .setSmallIcon(R.drawable.ic_message)
-            .setLargeIcon(BitmapFactory.decodeResource(c.getResources(), R.drawable.simeon_face))
-            .setContentTitle("Simeon")
+            .setLargeIcon(senderIndex == 0 ? BitmapFactory.decodeResource(c.getResources(), R.drawable.simeon_face) : contactIcon(sender))
+            .setContentTitle(sender)
             .setContentText(message)
-            .setStyle(new Notification.BigTextStyle().setBigContentTitle("Simeon").bigText(message))
+            .setStyle(new Notification.BigTextStyle().setBigContentTitle(sender).bigText(message))
             .setCategory(Notification.CATEGORY_MESSAGE)
             .setColor(Color.rgb(255, 176, 71))
             .setContentIntent(open)
             .setAutoCancel(true)
+            .setOnlyAlertOnce(false)
             .setShowWhen(true)
             .setWhen(System.currentTimeMillis())
             .setVisibility(Notification.VISIBILITY_PUBLIC)
             .build();
-        try { c.getSystemService(NotificationManager.class).notify(100, notification); return true; }
+        try { c.getSystemService(NotificationManager.class).notify(100 + senderIndex, notification); return true; }
         catch (SecurityException denied) { return false; }
     }
+    private static android.graphics.Bitmap contactIcon(String sender) {
+        android.graphics.Bitmap icon = android.graphics.Bitmap.createBitmap(128, 128, android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(icon);
+        canvas.drawColor(Color.rgb(37, 31, 24));
+        android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.rgb(255, 176, 71)); paint.setTextSize(68);
+        paint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD); paint.setTextAlign(android.graphics.Paint.Align.CENTER);
+        canvas.drawText(sender.substring(0, 1), 64, 64 - (paint.ascent() + paint.descent()) / 2, paint);
+        return icon;
+    }
+
 }
