@@ -75,15 +75,37 @@ Android implementation references:
 
 ## v1.4 contact messages
 
-Retrieved 2026-10-05. The added contacts only use purchase reminders and heist-ready notices. Simeon's existing vehicle lists remain available. Messages are simulated offline, with no live game/account connection.
+Retrieved 2026-10-05. The catalog is restricted to messages originally delivered
+to the GTA Online phone by text or email. Call dialogue is excluded, including
+Paige's Terrorbyte pitch. Terrorbyte purchase promotion remains in Warstock's
+actual email. Simeon's existing vehicle requests remain available.
 
-| Contact | Origin | Included text |
-| --- | --- | --- |
-| Warstock | [GTA Wiki: Warstock Cache & Carry](https://gta.fandom.com/wiki/Warstock_Cache_%26_Carry), `WSTCKMAIL3` | Vehicle-service purchase promotion; formatting controls removed. |
-| Paige Harris | [GTA Wiki: Terrorbyte](https://gta.fandom.com/wiki/Terrorbyte) | Exact short sentence from her Terrorbyte purchase reminder call. Presented as a notification, rather than claiming it was originally SMS. |
-| Lester | [GTA V American Labels](https://gist.github.com/aaronlink127/afc889be7d52146a76bab72ede0512c7), `HPLESTER_TXT_R` | Exact Facility Planning Screen reminder for continuing the Doomsday Heist. |
-| Prix Luxury Real Estate | [GTA Wiki: Mansions](https://gta.fandom.com/wiki/Mansions) | Opening 25-word excerpt from its mansion promotion email, with an ellipsis. Identified as an excerpt in the contact list. |
+| Contact | Delivery | Source / game label | Included message |
+| --- | --- | --- | --- |
+| Warstock Cache & Carry | Email | [Warstock](https://gta.fandom.com/wiki/Warstock_Cache_%26_Carry), WSTCKMAIL3 | Complete short purchase promotion. |
+| Pavel | Text | [Kosatka](https://gta.fandom.com/wiki/Kosatka), HIF_BUYSUB_0 | Exact closing excerpt inviting purchase of the submarine. |
+| Lester | Text | [American Labels](https://gist.github.com/aaronlink127/afc889be7d52146a76bab72ede0512c7), HPLESTER_TXT_R | Complete Doomsday Facility Planning Screen reminder. |
+| Lester | Text | [Arcades](https://gta.fandom.com/wiki/Arcades), CH_TXT_2 | Exact final sentence of the arcade purchase reminder. |
+| Lester | Text | [Arcade equipment setup](https://gta.fandom.com/wiki/Arcades/Setup%3A_Equipment), CH_TXT_5 | Complete Casino planning invitation after arcade setup; not a claim that all finale preparations are complete. |
+| Prix Luxury Real Estate | Email | [Mansions](https://gta.fandom.com/wiki/Mansions) | Exact opening 25-word excerpt of its property promotion. |
+| Tony | Text | [Nightclubs](https://gta.fandom.com/wiki/Nightclubs), FMBB_TXT_0 | Complete nightclub purchase reminder, including Txx. |
+| KDJ | Text | [Auto Shops](https://gta.fandom.com/wiki/Auto_Shops) | Complete Auto Shop purchase invitation. |
+| Agent 14 | Text | [Mobile Operations](https://gta.fandom.com/wiki/Mobile_Operations) | Exact first two sentences of the MOC purchase reminder. |
+| Bryony | Text | [Arena Workshop](https://gta.fandom.com/wiki/Arena_Workshop) | Exact workshop purchase sentence sent after competing without a workshop. |
+| Ron | Text | [English labels](https://gist.github.com/FrazzIe/d90f3c0025a7933f2a5b04faab92c645), SM_FLOW_TXT_1 | Complete hangar purchase reminder. |
+| Maze Bank Foreclosures | Email | [Maze Bank Foreclosures](https://gta.fandom.com/wiki/Maze_Bank_Foreclosures), MBANKMAIL | Exact opening sentence of the property offer. |
+| Miguel Madrazo | Text | [Cayo Perico Heist](https://gta.fandom.com/wiki/The_Cayo_Perico_Heist), HIF_INTRO_TXT | Exact Music Locker meeting invitation excerpt. |
+| Maude | Text | [Bounty Target](https://gta.fandom.com/wiki/Bounty_Target), BONET_TEXT1 | Exact introductory two-sentence bounty-hunting offer excerpt. |
 
-Generic vehicle-stock announcements and invented dialogue are excluded. New contacts use letter avatars; Simeon's existing portrait is retained.
+Descriptions identify text/email origins and short excerpts. Formatting control
+codes are removed; the quoted spelling and punctuation are retained. Longer
+dialogue is not rewritten or passed off as a complete original message.
+Unverified intros, generic vehicle stock announcements, and call-only dialogue
+are excluded. New contacts use letter avatars; Simeon's portrait remains.
 
-Each contact has a stable notification ID and separate copy PendingIntent. Reposting the same ID replaces that contact's old message, with `onlyAlertOnce=false`, so Android can alert again according to the existing channel sound and the user's sound/DND settings. Other contacts' notifications stay visible.
+Each contact has its own toggle, notification ID, message shuffle bag, and copy
+PendingIntent. The same contact may send consecutively. Its replacement uses
+onlyAlertOnce=false, allowing Android to play the existing channel sound again;
+other contacts' notifications remain visible. Android notification volume and
+Do Not Disturb still apply. Messages are simulated offline and do not track
+property ownership or actual heist progress.

@@ -24,7 +24,7 @@ public class ContactsTest {
     }
     @Test public void disabledContactsNeverDeliver() {
         for (int i=0;i<ContactMessages.IDS.length;i++) RequestScheduler.prefs(app).edit().putBoolean("contact_"+ContactMessages.IDS[i],i==3).commit();
-        for (int i=0;i<ContactMessages.IDS.length0;i++) {
+        for (int i=0;i<40;i++) {
             assertNotNull(RequestScheduler.nextMessage(app));
             assertEquals("Lester",RequestScheduler.prefs(app).getString("last_sender",""));
         }
@@ -36,7 +36,7 @@ public class ContactsTest {
         assertEquals(0,app.getSystemService(NotificationManager.class).getActiveNotifications().length);
     }
     @Test public void singleEnabledContactCanSendRepeatedMessages() {
-        for (int i=0;i<ContactMessages.IDS.length;i++) RequestScheduler.prefs(app).edit().putBoolean("contact_"+ContactMessages.IDS[i],i==3).commit();
+        for (int i=0;i<ContactMessages.IDS.length;i++) RequestScheduler.prefs(app).edit().putBoolean("contact_"+ContactMessages.IDS[i],i==1).commit();
         assertEquals(RequestScheduler.nextMessage(app),RequestScheduler.nextMessage(app));
     }
     @Test public void eachContactCyclesEveryMessageWithoutBoundaryRepeats() {

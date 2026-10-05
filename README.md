@@ -6,12 +6,18 @@
 
 Your contacts have a job for you. Again.
 
-A native Android fan app with messages from **Simeon, Warstock Cache & Carry,
-Paige Harris, Lester, and Prix Luxury Real Estate**, with the GTA notification chime.
-Simeon's vehicle lists remain available. Added contacts use verified heist-ready
-and purchase reminders; Paige's call and Prix Luxury's email use short exact
-excerpts. Messages are simulated offline with no live game connection.
+A native Android fan app with **13 contacts** and the GTA notification chime.
+Simeon's 16 vehicle lists remain available. Added messages are verified in-game
+phone texts or emails: heist/planning reminders, purchase offers, and introductions.
+Longer messages use exact short excerpts; no call dialogue is included.
+Messages are simulated offline with no live game connection.
 See [SOURCES.md](SOURCES.md) for provenance.
+
+Contacts: Simeon, Warstock Cache & Carry, Pavel, Lester, Prix Luxury Real Estate,
+Tony, KDJ, Agent 14, Bryony, Ron, Maze Bank Foreclosures, Miguel Madrazo, and Maude.
+Lester includes the Doomsday planning reminder, arcade purchase offer, and Casino
+planning invitation. Pavel includes the Kosatka purchase text. Warstock's email
+covers the Terrorbyte, Kosatka, Avenger, and MOC.
 Works offline. No ads, accounts, analytics, or internet permission.
 
 **[Download for Android](https://github.com/rgbeans/grab-these-vehicles/releases)**

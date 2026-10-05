@@ -225,7 +225,7 @@ public final class MainActivity extends Activity {
             .setNegativeButton("Cancel",null).show());
         root.addView(battery,params(-1,-2));
         space(root,20);
-        TextView footer = text("5 contacts · heist-ready & purchase reminders.\nWorks offline. No live game connection.\nUnofficial fan app.",12,MUTED,false);
+        TextView footer = text(ContactMessages.IDS.length + " contacts · texts & emails.\nHeist reminders, purchase offers & introductions.\nWorks offline. No live game connection.\nUnofficial fan app.",12,MUTED,false);
         footer.setGravity(Gravity.CENTER); footer.setLineSpacing(dp(4),1); root.addView(footer,params(-1,-2));
         space(root,10);
         Button privacy = button("Privacy",false);
