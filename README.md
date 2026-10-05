@@ -54,6 +54,12 @@ App previews rendered from the Android view hierarchy.
   </tr>
 </table>
 
+### Notification
+
+Actual expanded notification captured on Android 15.
+
+<img src="play-release/graphics/03-notification.png" alt="Expanded Simeon notification with portrait and five-vehicle request" width="360">
+
 ## Build from source
 
 Use **JDK 21**, **Android SDK 36**, and **build-tools 36.0.0**. The Gradle wrapper
