@@ -10,7 +10,7 @@ A native Android fan app that sends random **“Grab these vehicles”** notific
 with five-vehicle lists, Simeon's portrait, and the GTA notification chime.
 Works offline. No ads, accounts, analytics, or internet permission.
 
-**[Download version 1.3 for Android](downloads/grab-these-vehicles-v1.3.apk?raw=1)**
+**[Download for Android](https://github.com/rgbeans/grab-these-vehicles/releases)**
 
 Requires Android 8 or newer. The release APK uses the same package and signing
 certificate as earlier personal releases, so it can update those installations.
