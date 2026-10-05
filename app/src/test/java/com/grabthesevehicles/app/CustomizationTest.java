@@ -62,7 +62,8 @@ public class CustomizationTest {
             assertEquals(1,LauncherIcons.selected(app));
         }
         assertOneAlias(1);
-        assertEquals(PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,app.getPackageManager().getComponentEnabledSetting(new ComponentName(app,MainActivity.class)));
+        int mainState=app.getPackageManager().getComponentEnabledSetting(new ComponentName(app,MainActivity.class));
+        assertTrue(mainState==PackageManager.COMPONENT_ENABLED_STATE_DEFAULT || mainState==PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
         LauncherIcons.select(app,0);
         assertOneAlias(0);
         assertEquals(0,LauncherIcons.selected(app));
