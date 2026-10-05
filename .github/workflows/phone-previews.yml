@@ -31,12 +31,17 @@ jobs:
       - name: Boot Android 15
         timeout-minutes: 8
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libpulse0 libnss3 libx11-6 libxcb1 libxcb-cursor0 libxkbcommon-x11-0 libxcomposite1 libxcursor1 libxi6 libxtst6 libxrandr2 libxdamage1 libxfixes3 libegl1 libgl1 libasound2t64
           sudo chmod 666 /dev/kvm
           echo no | avdmanager create avd --force --name previews --package "system-images;android-35;google_apis;x86_64" --device pixel_6
-          "$ANDROID_SDK_ROOT/emulator/emulator" -avd previews -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > /tmp/emulator.log 2>&1 &
-          timeout 120 adb wait-for-device
-          for attempt in $(seq 1 180); do
-            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; then break; fi
+          "$ANDROID_SDK_ROOT/emulator/emulator" -avd previews -no-window -noaudio -no-boot-anim -no-snapshot -no-metrics -memory 2048 -cores 2 -gpu swiftshader_indirect -feature -Vulkan > /tmp/emulator.log 2>&1 &
+          emulator_pid=$!
+          sleep 5
+          kill -0 "$emulator_pid" || { cat /tmp/emulator.log; exit 1; }
+          for attempt in $(seq 1 120); do
+            kill -0 "$emulator_pid" || { cat /tmp/emulator.log; exit 1; }
+            if [ "$(timeout 10 adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; then break; fi
             sleep 2
           done
           test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
@@ -54,4 +59,4 @@ jobs:
         if: failure()
         run: |
           tail -100 /tmp/emulator.log || true
-          adb logcat -d -t 200 || true
+          timeout 10 adb logcat -d -t 200 || true
