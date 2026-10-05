@@ -29,11 +29,12 @@ jobs:
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "emulator" "system-images;android-35;google_apis;x86_64"
           ./gradlew --no-daemon assembleDebug
       - name: Boot Android 15
+        timeout-minutes: 8
         run: |
           sudo chmod 666 /dev/kvm
           echo no | avdmanager create avd --force --name previews --package "system-images;android-35;google_apis;x86_64" --device pixel_6
-          "$ANDROID_HOME/emulator/emulator" -avd previews -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > /tmp/emulator.log 2>&1 &
-          adb wait-for-device
+          "$ANDROID_SDK_ROOT/emulator/emulator" -avd previews -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > /tmp/emulator.log 2>&1 &
+          timeout 120 adb wait-for-device
           for attempt in $(seq 1 180); do
             if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; then break; fi
             sleep 2
