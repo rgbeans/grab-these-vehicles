@@ -6,7 +6,7 @@
 
 Your contacts have a job for you. Again.
 
-A native Android fan app with **13 contacts** and the GTA notification chime.
+A native Android fan app with **20 contacts** and the GTA notification chime.
 Simeon's 16 vehicle lists remain available. Added messages are verified in-game
 phone texts or emails: heist/planning reminders, purchase offers, and introductions.
 Longer messages use exact short excerpts; no call dialogue is included.
@@ -14,10 +14,15 @@ Messages are simulated offline with no live game connection.
 See [SOURCES.md](SOURCES.md) for provenance.
 
 Contacts: Simeon, Warstock Cache & Carry, Pavel, Lester, Prix Luxury Real Estate,
-Tony, KDJ, Agent 14, Bryony, Ron, Maze Bank Foreclosures, Miguel Madrazo, and Maude.
+Tony, KDJ, Agent 14, Bryony, Ron, Maze Bank Foreclosures, Miguel Madrazo, Maude, Mors Mutual Insurance, Pegasus, SecuroServ, Franklin, Lamar, Gerald,
+and Junk Energy.
 Lester includes the Doomsday planning reminder, arcade purchase offer, and Casino
 planning invitation. Pavel includes the Kosatka purchase text. Warstock's email
 covers the Terrorbyte, Kosatka, Avenger, and MOC.
+Gerald introduces stash houses and G’s Caches; Lamar introduces LD Organics.
+Franklin invites you to Record A Studios. Pegasus confirms vehicle availability.
+Dom’s Online introductions are calls, so the skydiving text uses its actual
+sender, Junk Energy. Each of the 20 senders has an individual toggle.
 Works offline. No ads, accounts, analytics, or internet permission.
 
 **[Download for Android](https://github.com/rgbeans/grab-these-vehicles/releases)**

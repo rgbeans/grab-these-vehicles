@@ -109,3 +109,23 @@ onlyAlertOnce=false, allowing Android to play the existing channel sound again;
 other contacts' notifications remain visible. Android notification volume and
 Do Not Disturb still apply. Messages are simulated offline and do not track
 property ownership or actual heist progress.
+
+## Additional phone introductions (v1.5)
+
+| Contact | Game label / source | Scope |
+| --- | --- | --- |
+| Mors Mutual Insurance | MORS_TXT_MSG, [English game labels](https://gist.github.com/aaronlink127/afc889be7d52146a76bab72ede0512c7) | Exact opening excerpt of the insurance introduction after a vehicle is destroyed. |
+| Pegasus | TXT_VEH_BASEPEG, [Labels List](https://pdfcoffee.com/labels-list-pdf-free.html) | Complete availability text following a vehicle purchase; not a pre-purchase offer. |
+| SecuroServ | GB_1M_TXT2, [Organizations](https://gta.fandom.com/wiki/Organizations) | Exact opening sentence and separate office-purchase excerpt; ellipsis marks truncation. |
+| Franklin | FIX_FLOW_TXT8, [Record A Studios](https://gta.fandom.com/wiki/Record_A_Studios) | Exact closing studio invitation after the Dre contract; not a claim that the Dre finale is ready. |
+| Lamar | ORGANI_TEXT, [LD Organics Product](https://gta.fandom.com/wiki/LD_Organics_Product) | Exact opening two sentences, sent after the first package is found. |
+| Gerald | DSH_TXT_NEAR, [Stash Houses](https://gta.fandom.com/wiki/Stash_Houses) | Exact opening two sentences of the stash-house introduction. |
+| Gerald | DEADDROPTXT0, [G’s Caches](https://gta.fandom.com/wiki/G%27s_Caches) | Exact opening two sentences; English game labels preserve “over”, correcting the wiki transcription typo. |
+| Junk Energy | SKYDIVEMAIL_TXT, [Junk Energy Skydives](https://gta.fandom.com/wiki/Junk_Energy_Skydives) | Exact invitation sentence from the phone message. |
+
+Dom Beasley’s GTA Online parachuting introduction is a call and is excluded.
+Story Mode texts are not imported. Brucie’s call-only BST pitch is also excluded.
+The added service and collectible introductions can occur after an initial
+purchase or encounter; they are not all messages to players who own nothing.
+All original contact indices stay unchanged so existing preferences and
+notification IDs survive an update. New contacts are appended.

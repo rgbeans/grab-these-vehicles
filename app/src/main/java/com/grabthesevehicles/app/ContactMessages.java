@@ -3,9 +3,9 @@ package com.grabthesevehicles.app;
 /** Verified phone texts and emails only. Exact excerpts are identified in SOURCES.md. */
 public final class ContactMessages {
     private ContactMessages() {}
-    public static final String[] IDS = {"simeon", "warstock", "pavel", "lester", "prix", "tony", "kdj", "agent14", "bryony", "ron", "mazebank", "miguel", "maude"};
-    public static final String[] NAMES = {"Simeon", "Warstock Cache & Carry", "Pavel", "Lester", "Prix Luxury Real Estate", "Tony", "KDJ", "Agent 14", "Bryony", "Ron", "Maze Bank Foreclosures", "Miguel Madrazo", "Maude"};
-    public static final String[] DESCRIPTIONS = {"Text · vehicle requests", "Email · Kosatka / Terrorbyte / Avenger / MOC", "Text · buy a Kosatka (excerpt)", "Texts · Doomsday / Casino / arcade offer", "Email · mansion offer (excerpt)", "Text · buy a nightclub", "Text · buy an Auto Shop", "Text · buy a MOC (excerpt)", "Text · buy an Arena Workshop (excerpt)", "Text · buy a hangar", "Email · property offer (excerpt)", "Text · Cayo Perico introduction (excerpt)", "Text · bounty-hunting introduction (excerpt)"};
+    public static final String[] IDS = {"simeon", "warstock", "pavel", "lester", "prix", "tony", "kdj", "agent14", "bryony", "ron", "mazebank", "miguel", "maude", "mors", "pegasus", "securoserv", "franklin", "lamar", "gerald", "junkenergy"};
+    public static final String[] NAMES = {"Simeon", "Warstock Cache & Carry", "Pavel", "Lester", "Prix Luxury Real Estate", "Tony", "KDJ", "Agent 14", "Bryony", "Ron", "Maze Bank Foreclosures", "Miguel Madrazo", "Maude", "Mors Mutual Insurance", "Pegasus", "SecuroServ", "Franklin", "Lamar", "Gerald", "Junk Energy"};
+    public static final String[] DESCRIPTIONS = {"Text · vehicle requests", "Email · Kosatka / Terrorbyte / Avenger / MOC", "Text · buy a Kosatka (excerpt)", "Texts · Doomsday / Casino / arcade offer", "Email · mansion offer (excerpt)", "Text · buy a nightclub", "Text · buy an Auto Shop", "Text · buy a MOC (excerpt)", "Text · buy an Arena Workshop (excerpt)", "Text · buy a hangar", "Email · property offer (excerpt)", "Text · Cayo Perico introduction (excerpt)", "Text · bounty-hunting introduction (excerpt)", "Text · insurance introduction (excerpt)", "Text · vehicle delivery confirmation", "Text · VIP / office offer (excerpts)", "Text · Record A Studios invitation (excerpt)", "Text · LD Organics introduction (excerpt)", "Texts · stash houses / G’s Caches (excerpts)", "Phone message · skydiving invitation (excerpt)"};
     private static final String[][] MESSAGES = {
         {},
         {"Become the warzone: purchase a Kosatka, Terrorbyte, Avenger or Mobile Operations Center today from warstock-cache-and-carry.com"},
@@ -21,7 +21,14 @@ public final class ContactMessages {
         {"So, those hangars are still available on the foreclosures site. Just like in case you wanted to get one."},
         {"Check out our exclusive properties at foreclosures.maze-bank.com."},
         {"There's a club at The Diamond called The Music Locker. Meet me there."},
-        {"Hello stranger! I interest you in some bounty hunting?"}
+        {"Hello stranger! I interest you in some bounty hunting?"},
+        {"Hello! This is a representative from Mors Mutual Insurance. We noticed you destroyed your personal vehicle and are offering competitive rates for new members."},
+        {"Your new vehicle has now been confirmed available from Pegasus."},
+        {"You are eligible for our VIP Protection Program.", "Purchase one of our office suites today to become a SecuroServ CEO..."},
+        {"Turns out we got an open invitation to hang at the studio, see you there soon."},
+        {"Hey dog, I got a favor to ask. My last batch of LD Organics just disappeared from the warehouse."},
+        {"You seeing these stash houses pop up around town, homie? Thats some competition I dont need.", "Seeing as we tight, I figured Id cut you into my lil secret. My crew got stashes hidden all over town."},
+        {"We're looking for daredevils to take part in Junk Energy Skydives."}
     };
     public static int count(int contact) { return contact == 0 ? VehicleMessages.count() : MESSAGES[contact].length; }
     public static String message(int contact, int index) { return contact == 0 ? VehicleMessages.message(index) : MESSAGES[contact][index]; }
