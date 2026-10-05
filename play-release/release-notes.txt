@@ -1,0 +1,6 @@
+Version 1.3
+- Tap the latest-request card to copy its message.
+- Open sound and notification settings from the app.
+- Recover missing alarms and keep intervals stable when the phone clock changes.
+- Added background and unused-app setup guidance.
+- Updated for Android 16.

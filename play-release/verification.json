@@ -1,0 +1,35 @@
+{
+  "version_name": "1.3",
+  "version_code": 4,
+  "package": "com.grabthesevehicles.app",
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "checked_at_utc": "2026-10-04",
+  "apk_sha256": "e42611733832560a40e4b4ac7e22ff054a40ec1807d267688f39f6082cecba45",
+  "aab_sha256": "0b358a39002f6cfe74251a7de0b06bfd8f6bf6ac9f8aa4777b0265fed6fddbad",
+  "signing_certificate_sha256": "2c1b51165103656aa02d4034fb7fb06f28f64409f2af8c2e5bf15534dc9baa64",
+  "gta_audio_sha256": "188c06a335ab994bb85f1594dd9cfe30671eb358526609497f43c867749d84af",
+  "android_behavior_tests": {
+    "passed": 30,
+    "failed": 0,
+    "app": 7,
+    "copy_and_settings": 3,
+    "recovery_android_8_and_16": 12,
+    "sound_android_8_and_16": 8
+  },
+  "policy_checks": "100,000 random waits and all 16 messages passed",
+  "checks": [
+    "Gradle assembleRelease and bundleRelease passed",
+    "Release lint: no errors; warnings documented by lint report",
+    "APK signature verified and certificate unchanged",
+    "APK alignment verified",
+    "AAB JAR signature verified",
+    "Google bundletool 1.18.3 validate passed",
+    "APK and AAB target SDK verified as 36",
+    "Bundled audio unchanged",
+    "Native store renders inspected"
+  ],
+  "physical_device_validation": "User confirmed the version 1.2 sound; version 1.3 changes have not been tested on a physical device here",
+  "publication_status": "Google Play publication pending",
+  "public_repository": "Original release signing key excluded; Android application code unchanged from the verified v1.3 release"
+}

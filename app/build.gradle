@@ -1,0 +1,62 @@
+plugins { id 'com.android.application' }
+
+def signingEnvironment = ['GTV_KEYSTORE_FILE', 'GTV_KEYSTORE_PASSWORD', 'GTV_KEY_ALIAS', 'GTV_KEY_PASSWORD']
+    .collectEntries { name -> [(name): providers.environmentVariable(name).orNull] }
+def hasReleaseSigning = signingEnvironment.values().every { it }
+if (signingEnvironment.values().any { it } && !hasReleaseSigning) {
+    throw new GradleException('Provide all four GTV signing environment variables, or none for unsigned release builds.')
+}
+
+android {
+    namespace 'com.grabthesevehicles.app'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.grabthesevehicles.app'
+        minSdk 26
+        targetSdk 36
+        versionCode 4
+        versionName '1.3'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile rootProject.file(signingEnvironment.GTV_KEYSTORE_FILE)
+                storePassword signingEnvironment.GTV_KEYSTORE_PASSWORD
+                keyAlias signingEnvironment.GTV_KEY_ALIAS
+                keyPassword signingEnvironment.GTV_KEY_PASSWORD
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (hasReleaseSigning) signingConfig signingConfigs.release
+        }
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.all {
+            // Robolectric's Android 16 simulation needs access to JDK internals.
+            jvmArgs += [
+                '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED',
+                '--add-opens=java.base/java.io=ALL-UNNAMED',
+                '--add-opens=java.base/java.net=ALL-UNNAMED',
+                '--add-opens=java.base/java.security=ALL-UNNAMED',
+                '--add-opens=java.base/java.text=ALL-UNNAMED',
+                '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED',
+                '--add-opens=java.desktop/java.awt.font=ALL-UNNAMED',
+                '--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
+            ]
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.17'
+}
