@@ -35,10 +35,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y libpulse0 libnss3 libx11-6 libxcb1 libxcb-cursor0 libxkbcommon-x11-0 libxcomposite1 libxcursor1 libxi6 libxtst6 libxrandr2 libxdamage1 libxfixes3 libegl1 libgl1 libasound2t64
           sudo chmod 666 /dev/kvm
-          image_devices="$ANDROID_SDK_ROOT/system-images/android-35/google_apis/x86_64/devices.xml"
-          if [ ! -f "$image_devices" ]; then
-            printf '<?xml version="1.0" encoding="UTF-8"?><d:devices xmlns:d="http://schemas.android.com/sdk/devices/1"/>' > "$image_devices"
-          fi
+          python3 tools/prepare_avd.py
           echo no | avdmanager create avd --force --name previews --package "system-images;android-35;google_apis;x86_64" --device pixel_6
           "$ANDROID_SDK_ROOT/emulator/emulator" -avd previews -no-window -noaudio -no-boot-anim -no-snapshot -no-metrics -memory 2048 -cores 2 -gpu swiftshader_indirect -feature -Vulkan > /tmp/emulator.log 2>&1 &
           emulator_pid=$!
