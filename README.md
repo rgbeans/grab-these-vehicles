@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="app/src/main/res/drawable/simeon_face.webp" alt="Simeon Yetarian" width="200">
+  <img src="app/src/main/res/drawable/simeon_face.png" alt="Simeon Yetarian" width="200">
 </p>
 
 # grab these vehicles
@@ -77,29 +77,30 @@ icon in this catalog and shows no avatar.
 <tr><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_franklin.png" width="64" height="64" alt="Franklin phone icon"><br>Franklin</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_lamar.png" width="64" height="64" alt="Lamar phone icon"><br>Lamar</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_gerald.png" width="64" height="64" alt="Gerald phone icon"><br>Gerald</td><td align="center"><img src="app/src/main/res/drawable-nodpi/contact_junkenergy.png" width="64" height="64" alt="Junk Energy phone icon"><br>Junk Energy</td></tr>
 </table>
 
-## v1.6.1 previews
+## v1.6.1 screenshots
 
-Feature illustrations using the app's original contact artwork, not device screenshots.
-Contacts are collapsible, and **Customize app icon** opens a grid of 19 contact icons.
-Version 1.6.1 uses adaptive launcher icons so the picture fills the launcher mask
-without the added white frame. Your launcher controls the final shape; notification
-header icons still depend on your phone.
+Actual screenshots from v1.6.1 running on an Android 15 emulator.
+The app screens and notification below are captured directly, without redrawing the UI.
+Notification styling can vary by phone.
 
 <table>
-  <tr><th>Collapsible contacts & settings</th><th>Contact icon picker</th><th>Full-picture launcher icons</th></tr>
+  <tr><th>Main screen</th><th>Expanded contacts</th><th>Settings</th></tr>
   <tr>
-    <td><img src="play-release/graphics/v1.6.1-settings.png" alt="v1.6.1 settings with collapsed contacts and Customize app icon button" width="300"></td>
-    <td><img src="play-release/graphics/v1.6.1-icon-picker.png" alt="v1.6.1 grid of 19 original contact icons" width="300"></td>
-    <td><img src="play-release/graphics/v1.6.1-launcher-icons.png" alt="v1.6.1 contact pictures filling rounded launcher icons without added white padding" width="300"></td>
+    <td><img src="play-release/graphics/v1.6.1/01-main.webp" alt="Actual v1.6.1 main screen with collapsed contacts" width="280"></td>
+    <td><img src="play-release/graphics/v1.6.1/02-contacts.webp" alt="Actual v1.6.1 expanded contact switches" width="280"></td>
+    <td><img src="play-release/graphics/v1.6.1/03-settings.webp" alt="Actual v1.6.1 sound settings and Customize app icon button" width="280"></td>
+  </tr>
+  <tr><th>Icon picker</th><th>More contact icons</th><th>Warstock notification</th></tr>
+  <tr>
+    <td><img src="play-release/graphics/v1.6.1/04-icon-picker.webp" alt="Actual v1.6.1 contact icon selection dialog" width="280"></td>
+    <td><img src="play-release/graphics/v1.6.1/05-icon-picker-more.webp" alt="Actual v1.6.1 icon picker scrolled to additional contacts" width="280"></td>
+    <td><img src="play-release/graphics/v1.6.1/06-notification.webp" alt="Actual Warstock notification sent by v1.6.1 in the Android notification shade" width="280"></td>
   </tr>
 </table>
 
-### Earlier Android notification capture
-
-Expanded Simeon notification captured on Android 15 before the current icon update.
-This historical capture shows the notification layout, not the v1.6.1 launcher icon.
-
-<img src="play-release/graphics/03-notification.png" alt="Earlier expanded Simeon notification with portrait and five-vehicle request" width="360">
+Reproduce these captures with the **Capture Android previews** workflow.
+It installs the app, navigates its real controls, sends a test notification, and saves
+the screen pixels using Android's screenshot command.
 
 ## Build from source
 
