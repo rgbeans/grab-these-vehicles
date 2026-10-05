@@ -164,3 +164,12 @@ older devices enable the replacement before disabling the previous aliases.
 The chosen icon changes the home-screen entry. Android/OEM notification-header
 branding may continue using the application icon and is not promised to change.
 Per-sender notification pictures remain independent of the launcher choice.
+
+## Launcher framing hotfix (v1.6.1)
+
+Every selectable launcher alias now uses an adaptive mipmap icon instead of
+a legacy bitmap. This prevents launchers from shrinking the picture inside
+a synthetic white background. A full image foreground fills the masked
+viewport while the same picture supplies the background bleed area.
+The original notification pictures are unchanged. Alias names stay stable
+so a saved selection survives an update.
