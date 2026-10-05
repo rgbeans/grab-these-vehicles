@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="app/src/main/res/drawable/simeon_face.webp" alt="Simeon Yetarian" width="200">
+</p>
+
 # grab these vehicles
 
 Simeon has a job for you. Again.
@@ -38,13 +42,17 @@ hibernated app cannot run until Android permits it again. Reopen after a force s
 Notifications run throughout the day and night. Android silent mode, notification
 volume, and Do Not Disturb still apply.
 
-## App views
+## Screenshots
 
-These previews are rendered from the real Android view hierarchy.
+App previews rendered from the Android view hierarchy.
 
-| Latest request | Settings |
-| --- | --- |
-| ![Latest request](play-release/graphics/01-requests.png) | ![Settings](play-release/graphics/02-settings.png) |
+<table>
+  <tr><th>Latest request</th><th>Settings</th></tr>
+  <tr>
+    <td><img src="play-release/graphics/01-requests.png" alt="Latest vehicle request" width="320"></td>
+    <td><img src="play-release/graphics/02-settings.png" alt="Notification and interval settings" width="320"></td>
+  </tr>
+</table>
 
 ## Build from source
 
