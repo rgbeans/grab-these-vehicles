@@ -31,6 +31,7 @@ public class AppTest {
     @Before public void setUp() {
         app=RuntimeEnvironment.getApplication();
         RequestScheduler.prefs(app).edit().clear().commit();
+        CallScheduler.prefs(app).edit().clear().commit();
         Shadows.shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
     }
 
