@@ -1,0 +1,56 @@
+[
+  {
+    "caller": "paige",
+    "texture": "CHAR_PAIGE",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_PAIGE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_paige.png"
+  },
+  {
+    "caller": "mechanic",
+    "texture": "CHAR_MECHANIC",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MECHANIC.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_mechanic.png"
+  },
+  {
+    "caller": "dom",
+    "texture": "CHAR_DOM",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_DOM.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_dom.png"
+  },
+  {
+    "caller": "brucie",
+    "texture": "CHAR_MP_BRUCIE",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MP_BRUCIE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_brucie.png"
+  },
+  {
+    "caller": "englishdave",
+    "texture": "CHAR_ENGLISH_DAVE",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_ENGLISH_DAVE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_englishdave.png"
+  },
+  {
+    "caller": "martin",
+    "texture": "CHAR_MARTIN",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MARTIN.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_martin.png"
+  },
+  {
+    "caller": "merryweather",
+    "texture": "CHAR_MP_MERRYWEATHER",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_MP_MERRYWEATHER.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_merryweather.png"
+  },
+  {
+    "caller": "assistant_male",
+    "texture": "CHAR_PA_MALE",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_PA_MALE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_assistant_male.png"
+  },
+  {
+    "caller": "assistant_female",
+    "texture": "CHAR_PA_FEMALE",
+    "source": "https://raw.githubusercontent.com/SwitchNetwork/fivem-wiki/5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a/notifications/CHAR_PA_FEMALE.PNG",
+    "file": "app/src/main/res/drawable-nodpi/call_icon_assistant_female.png"
+  }
+]

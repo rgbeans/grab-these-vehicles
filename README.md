@@ -23,7 +23,7 @@ Gerald introduces stash houses and G’s Caches; Lamar introduces LD Organics.
 Franklin invites you to Record A Studios. Pegasus confirms vehicle availability.
 Dom’s Online introductions are calls, so the skydiving text uses its actual
 sender, Junk Energy. Each of the 20 senders has an individual toggle.
-Works offline. No ads, accounts, analytics, or internet permission.
+Works offline. No ads, sign-in, analytics, or internet permission. Optional native calls create a separate local GTA caller account for contact pictures and ringtone settings.
 
 **[Download for Android](https://github.com/rgbeans/grab-these-vehicles/releases)**
 
@@ -33,9 +33,9 @@ certificate as earlier personal releases, so it can update those installations.
 ## Features
 
 - Optional incoming calls, **off by default**, with a separate 30–60-minute timer.
-- Bundled GTA phone ringtone, Answer/Decline controls, and automatic hang-up after the caller's recording. No microphone or real phone calls.
+- Your existing Phone app displays incoming calls, with the bundled GTA ringtone, native Answer/Decline controls, and automatic hang-up after the recording. Playback uses call volume and native audio routing. No microphone recording or outgoing calls.
 - **31 genuine GTA Online phone calls from 24 callers**, offering missions, businesses, and services. Import a local recording or replace a bundled voice.
-- Independent caller toggles, call intervals, and Android ringtone settings. On Android 14+, **Incoming call screen access** optionally allows the call screen over the lock screen; the notification still works without that access.
+- Independent caller toggles and call intervals. Original portraits include Paige and the Mechanic.
 
 - Random **30–60-minute** waits by default; adjustable from 15 to 1,440 minutes.
 - All **16 documented English request texts**, shuffled without immediate repeats.
@@ -74,7 +74,9 @@ volume, and Do Not Disturb still apply.
 
 Open **Phone calls** and turn on **Let contacts call you**. Notifications and calls keep separate schedules and switches. Both interval ranges accept 15–1,440 minutes. Use **Test a phone call** to preview a caller even when scheduled calls are off.
 
-Answering stops the ringtone and plays a local character recording, then hangs up automatically. Talking does nothing: the app has no microphone permission. Decline or Hang up stops the call immediately. Unanswered calls stop after 45 seconds. Android sound volume, Do Not Disturb, notification access, and background restrictions apply.
+First use **Set up native phone calls**, allow Contacts access, and enable **GTA Calls** in Android's calling-account settings (usually under **All calling accounts**). The app creates a separate on-device **GTA Callers** account with reserved fictional 555 numbers, portraits, and the custom ringtone. It does not become your default dialer or place outgoing calls. Native Phone styling varies by device, and simulated calls may appear in Phone history. **Remove GTA caller contacts** removes the app's local caller account and disables scheduled calls; Phone history is managed separately.
+
+Answering stops the ringtone and plays a local character recording, then hangs up automatically. Talking does nothing: the app has no microphone permission. Decline or Hang up stops the call immediately. Unanswered calls stop after 45 seconds. Ringtone volume controls ringing; call volume controls the voice. Android Do Not Disturb and background restrictions apply.
 
 31 genuine in-game phone calls ship for 24 callers: Simeon, Pavel, Lester, Tony, KDJ, Agent 14, Bryony, Ron, Maude, Franklin, Lamar, Gerald, Paige, Dom, Brucie, English Dave, Martin Madrazo, Raf, both Executive Assistants, Mechanic, Mors Mutual, Pegasus, and Merryweather. Calls offer work, introduce businesses and services, or invite you to missions. Some are historical call variants. Gameplay recordings may retain quiet game ambience. See [voice sources](SOURCES.md#voice-recordings-v171) and the [recording catalog](app/src/main/assets/call_catalog.json). The six message senders without a verified matching call remain available for local imports; nobody else's voice is assigned to them. Imported audio stays inside the app, replaces that contact's bundled audio, and must be playable, under 20 MB, and at most five minutes long. Removing an import restores the bundled recording if available.
 

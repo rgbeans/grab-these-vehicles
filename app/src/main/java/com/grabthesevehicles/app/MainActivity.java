@@ -70,6 +70,11 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume();
+        try { CallTelecom.register(this); } catch(RuntimeException ignored) {}
+        if(CallScheduler.prefs(this).getBoolean("enable_after_setup",false) && CallTelecom.ready(this)) {
+            CallScheduler.prefs(this).edit().remove("enable_after_setup").commit();
+            CallScheduler.setEnabled(this,true);
+        }
         RequestScheduler.ensureScheduled(this);
         CallScheduler.ensureScheduled(this);
         if (testAfterPermission && SimeonNotifications.allowed(this)) {
@@ -331,11 +336,15 @@ public final class MainActivity extends Activity {
         callsSwitch.setContentDescription("Enable simulated phone calls"); root.addView(callsSwitch,params(-1,56));
         callsSwitch.setOnCheckedChangeListener((view,checked) -> {
             if (updating) return;
+            if(checked && !CallTelecom.ready(this)) {
+                CallScheduler.prefs(this).edit().putBoolean("enable_after_setup",true).commit();
+                refreshCalls(); setupPhoneCalls(); return;
+            }
             CallScheduler.setEnabled(this,checked);
-            if (checked && !CallNotifications.allowed(this)) askNotificationAccess(false);
+            if(!checked) CallScheduler.prefs(this).edit().remove("enable_after_setup").commit();
             refreshCalls();
         });
-        root.addView(text("Off by default. Calls have their own timer and ringtone. Original GTA Online calls offer work, businesses, and missions. Answer to hear the caller, then the call ends. Your microphone is never used.",13,MUTED,false));
+        root.addView(text("Off by default. Calls use your phone's own call screen, earpiece/speaker controls, and call volume. Answer to hear the caller, then the call ends. Your microphone is never recorded.",13,MUTED,false));
         callsStatus=text("",13,MUTED,false); space(root,8); root.addView(callsStatus); space(root,16);
         root.addView(text("CALL INTERVAL · MINUTES",11,MUTED,true));
         SharedPreferences p=CallScheduler.prefs(this);
@@ -359,26 +368,50 @@ public final class MainActivity extends Activity {
         });
         space(root,10); Button test=button("Test a phone call",false); root.addView(test,params(-1,-2));
         test.setOnClickListener(v -> {
+            if(!CallTelecom.ready(this)) { setupPhoneCalls(); return; }
             java.util.List<Integer> callers=CallClips.callers(this);
             if(callers.size()==0) { Toast.makeText(this,"Enable a caller with a voice recording first",Toast.LENGTH_LONG).show(); return; }
             String[] names=new String[callers.size()]; for(int i=0;i<names.length;i++) names[i]=CallContacts.NAMES[callers.get(i)];
             new AlertDialog.Builder(this).setTitle("Who should call?").setItems(names,(d,i) -> {
-                if(!CallNotifications.ring(this,callers.get(i))) Toast.makeText(this,"Allow call notifications and finish any active call",Toast.LENGTH_LONG).show();
+                if(!CallNotifications.ring(this,callers.get(i))) Toast.makeText(this,"Finish the active call or complete phone-call setup",Toast.LENGTH_LONG).show();
             }).setNegativeButton("Cancel",null).show();
         });
         space(root,10); Button voices=button("Callers & voice recordings",false); root.addView(voices,params(-1,-2)); voices.setOnClickListener(v -> chooseCallRecording());
-        space(root,10); Button sound=button("Ringtone & call notification settings",false); root.addView(sound,params(-1,-2));
-        sound.setOnClickListener(v -> { CallNotifications.channels(this); launchSettings(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,CallNotifications.CHANNEL)); });
-        if(Build.VERSION.SDK_INT>=34) {
-            space(root,10); Button full=button("Incoming call screen access",false); root.addView(full,params(-1,-2));
-            full.setOnClickListener(v -> launchSettings(new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,Uri.parse("package:"+getPackageName()))));
-        }
+        space(root,10); Button setup=button("Set up native phone calls",false); root.addView(setup,params(-1,-2)); setup.setOnClickListener(v -> setupPhoneCalls());
+        space(root,10); Button remove=button("Remove GTA caller contacts",false); root.addView(remove,params(-1,-2));
+        remove.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("Remove local GTA callers?")
+            .setMessage("Removes only this app's GTA caller account and contacts, and turns scheduled calls off. Your personal contacts and the Phone app's history are retained.")
+            .setPositiveButton("Remove",(d,w) -> { CallerContacts.remove(this); refreshCalls(); })
+            .setNegativeButton("Cancel",null).show());
+    }
+    private void setupPhoneCalls() {
+        try { CallTelecom.register(this); }
+        catch(RuntimeException unavailable) { Toast.makeText(this,"Native calls are unavailable on this device",Toast.LENGTH_LONG).show(); return; }
+        new AlertDialog.Builder(this).setTitle("Use your phone's call screen")
+            .setMessage("Create local GTA caller contacts for names, pictures, and the GTA ringtone, then enable GTA Calls in Android's calling-account settings. These contacts stay in a separate on-device account. Simulated calls may appear in your Phone app's history. No real calls are placed and no microphone audio is recorded.")
+            .setPositiveButton("Set up callers",(d,w) -> {
+                if(!CallerContacts.permitted(this)) requestPermissions(new String[]{Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS},46);
+                else installCallers();
+            }).setNeutralButton("Calling accounts",(d,w) -> openCallingAccounts()).setNegativeButton("Cancel",(d,w) -> CallScheduler.prefs(this).edit().remove("enable_after_setup").commit()).show();
+    }
+    private void openCallingAccounts() { launchSettings(new Intent(android.telecom.TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS)); }
+    private void installCallers() {
+        Toast.makeText(this,"Setting up local GTA callers",Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            try {
+                CallerContacts.install(getApplicationContext());
+                runOnUiThread(() -> { if(!isFinishing()) { refreshCalls(); openCallingAccounts(); } });
+            } catch(Exception failure) {
+                android.util.Log.e("GtaCalls","Caller setup failed",failure);
+                runOnUiThread(() -> { if(!isFinishing()) Toast.makeText(this,"Could not create the local GTA caller contacts",Toast.LENGTH_LONG).show(); });
+            }
+        }).start();
     }
     private void refreshCalls() {
         if(callsSwitch==null) return;
         boolean enabled=CallScheduler.enabled(this); updating=true; callsSwitch.setChecked(enabled); updating=false;
         int count=CallClips.callers(this).size(); long next=CallScheduler.nextWallTime(this);
-        callsStatus.setText(!enabled?"Calls are off.":count==0?"No caller recordings enabled.":!CallNotifications.allowed(this)?"Calls are blocked in Android notification settings.":"Calls on · "+count+" callers · next around "+DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(next)));
+        callsStatus.setText(!enabled?"Calls are off.":count==0?"No caller recordings enabled.":!CallTelecom.ready(this)?"Complete native phone-call setup to receive calls.":"Calls on · "+count+" callers · next around "+DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(next)));
     }
     private void chooseCallRecording() {
         String[] names=new String[CallContacts.NAMES.length];
@@ -456,6 +489,7 @@ public final class MainActivity extends Activity {
     }
     @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(code,permissions,results);
+        if(code==46) { if(CallerContacts.permitted(this)) installCallers(); else Toast.makeText(this,"Contacts access is needed for native caller pictures and ringtone",Toast.LENGTH_LONG).show(); return; }
         if (code == 20) {
             boolean send = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED && testAfterPermission;
             testAfterPermission = false;

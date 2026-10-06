@@ -18,6 +18,7 @@ public class CallsTest {
         RequestScheduler.prefs(app).edit().clear().commit();
         CallScheduler.prefs(app).edit().clear().commit();
         Shadows.shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
+        Shadows.shadowOf(app).denyPermissions(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS);
     }
     @Test public void callsStartOffAndRemainOffWhenNotificationTimerRuns() {
         RequestScheduler.setEnabled(app,true); CallScheduler.ensureScheduled(app);
@@ -46,17 +47,20 @@ public class CallsTest {
         assertEquals(call,CallScheduler.prefs(app).getLong("next_elapsed",0));
         assertNotNull(app.getSystemService(android.app.job.JobScheduler.class).getPendingJob(CallScheduler.RECOVERY_JOB));
     }
-    @Test public void bundledCallersMatchTheirOwnVoicesAndUseCustomRingtone() {
+    @Test public void bundledCallersUseManagedPhoneAccountAndCallVolume() {
         assertEquals(24,CallClips.callers(app).size());
         assertFalse(CallClips.available(app,1)); // Warstock has no invented voice.
-        assertTrue(CallNotifications.ring(app,3)); // Lester
-        assertFalse(CallNotifications.ring(app,0)); // Only one call at a time.
-        assertEquals(3,CallScheduler.prefs(app).getInt("active_contact",-1));
-        NotificationManager manager=app.getSystemService(NotificationManager.class);
-        assertEquals(SoundProvider.RINGTONE_URI,manager.getNotificationChannel(CallNotifications.CHANNEL).getSound());
-        assertEquals(45_000,manager.getActiveNotifications()[0].getNotification().getTimeoutAfter());
-        CallNotifications.end(app,null);
-        assertEquals(0,manager.getActiveNotifications().length);
+        CallTelecom.register(app);
+        android.telecom.PhoneAccount account=app.getSystemService(android.telecom.TelecomManager.class).getPhoneAccount(CallTelecom.handle(app));
+        assertTrue(account.hasCapabilities(android.telecom.PhoneAccount.CAPABILITY_CALL_PROVIDER));
+        assertFalse(account.hasCapabilities(android.telecom.PhoneAccount.CAPABILITY_SELF_MANAGED));
+        assertTrue(account.supportsUriScheme("sip")); assertFalse(account.supportsUriScheme("tel"));
+        assertEquals(android.media.AudioAttributes.USAGE_VOICE_COMMUNICATION,CallPlaybackService.attributes().getUsage());
+        assertEquals(android.media.AudioManager.STREAM_VOICE_CALL,CallPlaybackService.attributes().getVolumeControlStream());
+        assertFalse(CallNotifications.ring(app,3)); // Setup is required; there is no custom UI fallback.
+        assertFalse(CallNotifications.active(app));
+        assertNotEquals(0,CallContacts.icon(20)); // Paige
+        assertNotEquals(0,CallContacts.icon(26)); // Mechanic
     }
     @Test public void everyBundledCallHasVerifiedCallerAndSource() throws Exception {
         assertEquals(ContactMessages.IDS.length,20);
@@ -101,6 +105,36 @@ public class CallsTest {
     private void ringing(String token) {
         CallScheduler.prefs(app).edit().putString("active_token",token).putString("active_phase","ringing")
             .putInt("active_boot",CallScheduler.bootCount(app)).putLong("active_until",SystemClock.elapsedRealtime()+45_000).commit();
+    }
+    @Test public void nativePhoneConnectionAnswersHoldsAndDisconnects() {
+        ringing("native");
+        NativeCallService service=Robolectric.buildService(NativeCallService.class).create().get();
+        android.os.Bundle extras=new android.os.Bundle(); extras.putString("gta_token","native"); extras.putInt("gta_contact",20);
+        android.telecom.Connection connection=service.onCreateIncomingConnection(CallTelecom.handle(app),new android.telecom.ConnectionRequest(CallTelecom.handle(app),null,extras));
+        assertEquals(android.telecom.Connection.STATE_RINGING,connection.getState());
+        connection.onAnswer(); assertEquals(android.telecom.Connection.STATE_ACTIVE,connection.getState());
+        assertEquals("playing",CallNotifications.phase(app));
+        connection.onHold(); assertEquals(android.telecom.Connection.STATE_HOLDING,connection.getState());
+        connection.onUnhold(); assertEquals(android.telecom.Connection.STATE_ACTIVE,connection.getState());
+        connection.onDisconnect(); assertEquals(android.telecom.Connection.STATE_DISCONNECTED,connection.getState());
+        assertFalse(CallNotifications.active(app));
+    }
+    @Test public void nativeAccountCannotPlaceOutgoingOrAcceptStaleCalls() {
+        NativeCallService service=Robolectric.buildService(NativeCallService.class).create().get();
+        android.os.Bundle extras=new android.os.Bundle(); extras.putString("gta_token","stale"); extras.putInt("gta_contact",26);
+        android.telecom.ConnectionRequest request=new android.telecom.ConnectionRequest(CallTelecom.handle(app),null,extras);
+        assertEquals(android.telecom.Connection.STATE_DISCONNECTED,service.onCreateIncomingConnection(CallTelecom.handle(app),request).getState());
+        assertEquals(android.telecom.Connection.STATE_DISCONNECTED,service.onCreateOutgoingConnection(CallTelecom.handle(app),request).getState());
+    }
+    @Test public void nativeUnansweredCallTimesOutWithoutExactAlarmAccess() {
+        ringing("timeout");
+        NativeCallService service=Robolectric.buildService(NativeCallService.class).create().get();
+        android.os.Bundle extras=new android.os.Bundle(); extras.putString("gta_token","timeout"); extras.putInt("gta_contact",26);
+        android.telecom.Connection connection=service.onCreateIncomingConnection(CallTelecom.handle(app),new android.telecom.ConnectionRequest(CallTelecom.handle(app),null,extras));
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(45));
+        assertEquals(android.telecom.Connection.STATE_DISCONNECTED,connection.getState());
+        assertEquals(android.telecom.DisconnectCause.MISSED,connection.getDisconnectCause().getCode());
+        assertFalse(CallNotifications.active(app));
     }
     @Test public void onlyCurrentCallCanAnswerOrHangUp() {
         ringing("current");

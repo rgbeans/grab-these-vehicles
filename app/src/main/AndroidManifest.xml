@@ -4,8 +4,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -170,8 +172,14 @@
         <activity android:name=".CopyMessageActivity" android:exported="false"
             android:excludeFromRecents="true" android:noHistory="true"
             android:theme="@style/CopyTheme" />
-        <activity android:name=".CallActivity" android:exported="false" android:excludeFromRecents="true" android:launchMode="singleTop" />
-        <service android:name=".CallPlaybackService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
+        <service android:name=".CallPlaybackService" android:exported="false" android:foregroundServiceType="phoneCall" />
+        <service android:name=".NativeCallService" android:exported="true" android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+            <intent-filter><action android:name="android.telecom.ConnectionService" /></intent-filter>
+        </service>
+        <service android:name=".CallerAccountService" android:exported="true" android:permission="android.permission.BIND_ACCOUNT_AUTHENTICATOR">
+            <intent-filter><action android:name="android.accounts.AccountAuthenticator" /></intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator" android:resource="@xml/caller_account" />
+        </service>
         <receiver android:name=".CallReceiver" android:exported="false" />
         <provider android:name=".SoundProvider"
             android:authorities="com.grabthesevehicles.app.sounds"

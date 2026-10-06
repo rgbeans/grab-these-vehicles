@@ -9,7 +9,8 @@ import android.widget.Toast;
 public final class CallPlaybackService extends Service {
     static volatile boolean running;
     private MediaPlayer player;
-    private AudioFocusRequest focus;
+    private static CallPlaybackService instance;
+    private boolean held,prepared;
     private String token;
     private final Handler handler=new Handler(Looper.getMainLooper());
     @Override public IBinder onBind(Intent intent) { return null; }
@@ -17,29 +18,32 @@ public final class CallPlaybackService extends Service {
         String incoming=intent==null?null:intent.getStringExtra("token");
         if(!CallNotifications.matches(this,incoming) || !"playing".equals(CallNotifications.phase(this))) { stopSelf(); return START_NOT_STICKY; }
         if(player!=null) return START_NOT_STICKY;
-        token=incoming; running=true;
+        token=incoming; running=true; instance=this;
+        held=CallScheduler.prefs(this).getBoolean("active_held",false);
         int contact=CallScheduler.prefs(this).getInt("active_contact",-1);
         startForeground(CallNotifications.ID,CallNotifications.playing(this,token,contact));
-        AudioAttributes attributes=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
-        AudioManager audio=getSystemService(AudioManager.class);
-        focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT).setAudioAttributes(attributes)
-            .setOnAudioFocusChangeListener(change -> { if(change<0) finishCall(); },handler).build();
-        if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED) { finishCall(); return START_NOT_STICKY; }
+        // Telecom owns call audio focus, mode, earpiece/speaker/Bluetooth routing, and call volume.
+        AudioAttributes attributes=attributes();
         try {
             player=new MediaPlayer(); player.setAudioAttributes(attributes);
             CallClips.configure(this,contact,player);
             player.setOnCompletionListener(p -> finishCall());
             player.setOnErrorListener((p,what,extra) -> { Toast.makeText(this,"Could not play this call recording",Toast.LENGTH_SHORT).show(); finishCall(); return true; });
-            player.setOnPreparedListener(p -> p.start()); player.prepareAsync();
+            player.setOnPreparedListener(p -> { prepared=true; if(!held) p.start(); }); player.prepareAsync();
             handler.postDelayed(this::finishCall,300_000);
         } catch(Exception error) { Toast.makeText(this,"Could not play this call recording",Toast.LENGTH_SHORT).show(); finishCall(); }
         return START_NOT_STICKY;
     }
-    private void finishCall() { CallNotifications.end(this,token); stopSelf(); }
+    static AudioAttributes attributes() { return new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build(); }
+    static void hold(boolean held) {
+        CallPlaybackService service=instance; if(service==null) return;
+        service.held=held;
+        if(service.player!=null && service.prepared) { if(held) service.player.pause(); else service.player.start(); }
+    }
+    private void finishCall() { CallNotifications.end(this,token,android.telecom.DisconnectCause.REMOTE); stopSelf(); }
     @Override public void onDestroy() {
-        handler.removeCallbacksAndMessages(null); running=false;
+        handler.removeCallbacksAndMessages(null); running=false; if(instance==this) instance=null;
         if(player!=null) { player.release(); player=null; }
-        if(focus!=null) getSystemService(AudioManager.class).abandonAudioFocusRequest(focus);
         stopForeground(STOP_FOREGROUND_REMOVE);
         if(CallNotifications.matches(this,token)) CallNotifications.end(this,token);
         super.onDestroy();

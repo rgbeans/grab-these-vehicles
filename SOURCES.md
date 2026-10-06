@@ -218,3 +218,10 @@ The machine-readable [call catalog](app/src/main/assets/call_catalog.json) recor
 | tony | Nightclub purchase and business offer | [Video](https://www.youtube.com/watch?v=PIlfaM6gOaA) 0.85–37.65 | [Context](https://gta.fandom.com/wiki/Nightclubs) |
 
 The bundled `gta_ringtone.mp3` is the GTA Online phone ringtone supplied by the user. Imports stay in private app storage and are not exposed through the public sound provider. No microphone permission or generated voices are used.
+
+
+## Native phone calls (v1.7.2)
+
+Calls use Android's managed [ConnectionService](https://developer.android.com/reference/android/telecom/ConnectionService) and the existing default Phone app, following the [Telecom framework](https://developer.android.com/develop/connectivity/telecom). Voice playback uses [AudioAttributes.USAGE_VOICE_COMMUNICATION](https://developer.android.com/reference/android/media/AudioAttributes), with Telecom managing audio mode and routes. Native portraits and the custom ringtone use separate on-device GTA caller contacts. Call addresses are fictional +1-202-555-0100 through +1-202-555-0129, from the [NANPA reserved entertainment range](https://nanpa.com/numbering/555-line-numbers); they are app identities, not GTA's original phone numbers. The GTA account rejects outgoing calls and is excluded from ordinary telephone outgoing-account choices.
+
+Nine additional original 64-pixel game phone textures cover Paige, Mechanic, Dom, Brucie, English Dave, Martin, Merryweather, and both Executive Assistants. Pinned source URLs and texture names are in [call-icons.json](play-release/call-icons.json), using SwitchNetwork/fivem-wiki commit `5e14fa9b8bb3dd661d905b4a14c01c689a5b3b6a`. Raf has no verified portrait in that pinned catalog and retains the Phone app's placeholder.
