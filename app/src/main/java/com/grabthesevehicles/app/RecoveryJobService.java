@@ -7,6 +7,7 @@ import android.app.job.JobService;
 public final class RecoveryJobService extends JobService {
     @Override public boolean onStartJob(JobParameters parameters) {
         RequestScheduler.ensureScheduled(this);
+        CallScheduler.ensureScheduled(this);
         return false;
     }
     @Override public boolean onStopJob(JobParameters parameters) { return true; }

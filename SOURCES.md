@@ -173,3 +173,22 @@ a synthetic white background. A full image foreground fills the masked
 viewport while the same picture supplies the background bleed area.
 The original notification pictures are unchanged. Alias names stay stable
 so a saved selection survives an update.
+
+
+## Voice recordings (v1.7)
+
+Original game recordings fetched from GTA Wiki's MediaWiki file API. The app replays these as simulated incoming calls; character quotes are not represented as original in-game telephone dialogue. Copyright in the original game recordings belongs to their respective owners.
+
+| Caller | Bundled file | Original source and context |
+| --- | --- | --- |
+| Lester | `call_lester_fleeca.ogg` | [The Fleeca Job](https://gta.fandom.com/wiki/The_Fleeca_Job), [FleecaJob-GTAO-LesterPostHeistCall.ogg](https://gta.fandom.com/wiki/File:FleecaJob-GTAO-LesterPostHeistCall.ogg): post-heist phone call, 12.20 seconds. |
+| Lester / LJT | `call_lester_ljt.ogg` | [Lester Crest](https://gta.fandom.com/wiki/Lester_Crest), [LJT-GTAO-0x088D98C9.ogg](https://gta.fandom.com/wiki/File:LJT-GTAO-0x088D98C9.ogg): biker business phone warning, 6.28 seconds. |
+| Simeon | `call_simeon.ogg` | [GTA Online Protagonist](https://gta.fandom.com/wiki/GTA_Online_Protagonist), [GTAOProtagonist-GTAO-Quote.ogg](https://gta.fandom.com/wiki/File:GTAOProtagonist-GTAO-Quote.ogg): Simeon tutorial greeting, 7.21 seconds. |
+| Pavel | `call_pavel.ogg` | [Pavel](https://gta.fandom.com/wiki/Pavel), [Pavel-GTAO-Quote.ogg](https://gta.fandom.com/wiki/File:Pavel-GTAO-Quote.ogg): Pavel introduction quote, 8.52 seconds. |
+| Tony | `call_tony.ogg` | [Tony Prince](https://gta.fandom.com/wiki/Tony_Prince), [TonyPrince-GTAO-Quote.ogg](https://gta.fandom.com/wiki/File:TonyPrince-GTAO-Quote.ogg): Tony nightclub dialogue to Lazlow, 13.22 seconds. |
+| Ron | `call_ron.ogg` | [Ron Jakowski](https://gta.fandom.com/wiki/Ron_Jakowski), [SmugglersRun-GTAO-PurchasingHangar-RonMentionsTrevor.ogg](https://gta.fandom.com/wiki/File:SmugglersRun-GTAO-PurchasingHangar-RonMentionsTrevor.ogg): Ron's hangar introduction quote, 16.09 seconds. |
+| Franklin | `call_franklin.ogg` | [Franklin Clinton](https://gta.fandom.com/wiki/Franklin_Clinton), [FranklinClinton-GTAO-Quote-Pavel.ogg](https://gta.fandom.com/wiki/File:FranklinClinton-GTAO-Quote-Pavel.ogg): Franklin asking the player about Pavel, 11.44 seconds. |
+| Lamar | `call_lamar.ogg` | [Vernon](https://gta.fandom.com/wiki/Vernon), [LamarDavis-GTAO-VernonQuote.ogg](https://gta.fandom.com/wiki/File:LamarDavis-GTAO-VernonQuote.ogg): Lamar describing Vernon, 6.90 seconds. |
+| Gerald | `call_gerald.ogg` | [Gerald](https://gta.fandom.com/wiki/Gerald), [Gerald-GTAO-Quote.ogg](https://gta.fandom.com/wiki/File:Gerald-GTAO-Quote.ogg): Gerald's quote to the player, 4.10 seconds. |
+
+The bundled `gta_ringtone.mp3` is the GTA Online phone ringtone supplied by the user for this update. Imported recordings are copied into private app storage and never exposed through the public sound provider. No generated voices or microphone processing are used.

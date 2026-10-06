@@ -40,7 +40,10 @@ import java.util.Date;
 public final class MainActivity extends Activity {
     private static final int BG = Color.rgb(16,16,20), CARD = Color.rgb(28,28,34);
     private static final int TEXT = Color.rgb(245,243,238), MUTED = Color.rgb(165,165,174), AMBER = Color.rgb(255,176,71);
-    private Switch enabledSwitch;
+    private Switch enabledSwitch, callsSwitch;
+    private EditText callMinInput, callMaxInput;
+    private TextView callsStatus;
+    private int importContact = -1;
     private EditText minInput, maxInput;
     private TextView deliveryStatus, requestBody, requestLabel, timingStatus, backgroundStatus, copyHint, requestSender;
     private LinearLayout messageCard, contactsList;
@@ -55,6 +58,7 @@ public final class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        if (state != null) importContact = state.getInt("import_contact", -1);
         SimeonNotifications.createChannel(this);
         SharedPreferences prefs = RequestScheduler.prefs(this);
         boolean firstOpen = !prefs.contains("enabled");
@@ -67,6 +71,7 @@ public final class MainActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         RequestScheduler.ensureScheduled(this);
+        CallScheduler.ensureScheduled(this);
         if (testAfterPermission && SimeonNotifications.allowed(this)) {
             testAfterPermission = false;
             sendTest();
@@ -274,6 +279,7 @@ public final class MainActivity extends Activity {
         Button appIcon = button("Customize app icon",false);
         appIcon.setOnClickListener(v -> chooseAppIcon());
         root.addView(appIcon,params(-1,-2));
+        addCalls(root);
         space(root,22);
 
         notificationAccess = button("Allow notifications",false); notificationAccess.setOnClickListener(v -> askNotificationAccess(false));
@@ -318,6 +324,87 @@ public final class MainActivity extends Activity {
         e.setInputType(InputType.TYPE_CLASS_NUMBER); e.setTextColor(TEXT); e.setTextSize(22);
         e.setPadding(dp(14),dp(8),dp(14),dp(8)); e.setContentDescription(description);
         e.setBackground(surface(CARD,12,true)); e.setSelectAllOnFocus(true); return e;
+    }
+    private void addCalls(LinearLayout root) {
+        space(root,28); root.addView(text("PHONE CALLS",14,AMBER,true));
+        callsSwitch = new Switch(this); callsSwitch.setText("Let contacts call you"); callsSwitch.setTextColor(TEXT);
+        callsSwitch.setContentDescription("Enable simulated phone calls"); root.addView(callsSwitch,params(-1,56));
+        callsSwitch.setOnCheckedChangeListener((view,checked) -> {
+            if (updating) return;
+            CallScheduler.setEnabled(this,checked);
+            if (checked && !CallNotifications.allowed(this)) askNotificationAccess(false);
+            refreshCalls();
+        });
+        root.addView(text("Off by default. Calls have their own timer and ringtone. Eight callers include original character voice clips; add recordings for others. Answer to hear the caller, then the call ends. Your microphone is never used.",13,MUTED,false));
+        callsStatus=text("",13,MUTED,false); space(root,8); root.addView(callsStatus); space(root,16);
+        root.addView(text("CALL INTERVAL · MINUTES",11,MUTED,true));
+        SharedPreferences p=CallScheduler.prefs(this);
+        callMinInput=intervalField("Minimum call interval, minutes",p.getInt("min",30));
+        callMaxInput=intervalField("Maximum call interval, minutes",p.getInt("max",60));
+        LinearLayout inputs=new LinearLayout(this);
+        LinearLayout minimum=column(),maximum=column();
+        minimum.addView(text("MINIMUM",10,MUTED,true)); minimum.addView(callMinInput,params(-1,56));
+        maximum.addView(text("MAXIMUM",10,MUTED,true)); maximum.addView(callMaxInput,params(-1,56));
+        LinearLayout.LayoutParams left=new LinearLayout.LayoutParams(0,-2,1); left.setMargins(0,0,dp(8),0);
+        inputs.addView(minimum,left); inputs.addView(maximum,new LinearLayout.LayoutParams(0,-2,1)); root.addView(inputs); space(root,10);
+        Button save=button("Save call intervals",true); root.addView(save,params(-1,-2));
+        save.setOnClickListener(v -> {
+            try {
+                int min=Integer.parseInt(callMinInput.getText().toString().trim()),max=Integer.parseInt(callMaxInput.getText().toString().trim());
+                if(!IntervalPolicy.valid(min,max)) { Toast.makeText(this,"Use 15–1,440 minutes, with maximum at least minimum",Toast.LENGTH_LONG).show(); return; }
+                p.edit().putInt("min",min).putInt("max",max).commit();
+                if(CallScheduler.enabled(this)) CallScheduler.scheduleNew(this);
+                Toast.makeText(this,"Call intervals saved",Toast.LENGTH_SHORT).show(); refreshCalls();
+            } catch(NumberFormatException e) { Toast.makeText(this,"Enter call intervals in minutes",Toast.LENGTH_SHORT).show(); }
+        });
+        space(root,10); Button test=button("Test a phone call",false); root.addView(test,params(-1,-2));
+        test.setOnClickListener(v -> {
+            java.util.List<Integer> callers=CallClips.callers(this);
+            if(callers.size()==0) { Toast.makeText(this,"Enable a caller with a voice recording first",Toast.LENGTH_LONG).show(); return; }
+            String[] names=new String[callers.size()]; for(int i=0;i<names.length;i++) names[i]=ContactMessages.NAMES[callers.get(i)];
+            new AlertDialog.Builder(this).setTitle("Who should call?").setItems(names,(d,i) -> {
+                if(!CallNotifications.ring(this,callers.get(i))) Toast.makeText(this,"Allow call notifications and finish any active call",Toast.LENGTH_LONG).show();
+            }).setNegativeButton("Cancel",null).show();
+        });
+        space(root,10); Button voices=button("Callers & voice recordings",false); root.addView(voices,params(-1,-2)); voices.setOnClickListener(v -> chooseCallRecording());
+        space(root,10); Button sound=button("Ringtone & call notification settings",false); root.addView(sound,params(-1,-2));
+        sound.setOnClickListener(v -> { CallNotifications.channels(this); launchSettings(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName()).putExtra(Settings.EXTRA_CHANNEL_ID,CallNotifications.CHANNEL)); });
+        if(Build.VERSION.SDK_INT>=34) {
+            space(root,10); Button full=button("Incoming call screen access",false); root.addView(full,params(-1,-2));
+            full.setOnClickListener(v -> launchSettings(new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,Uri.parse("package:"+getPackageName()))));
+        }
+    }
+    private void refreshCalls() {
+        if(callsSwitch==null) return;
+        boolean enabled=CallScheduler.enabled(this); updating=true; callsSwitch.setChecked(enabled); updating=false;
+        int count=CallClips.callers(this).size(); long next=CallScheduler.nextWallTime(this);
+        callsStatus.setText(!enabled?"Calls are off.":count==0?"No caller recordings enabled.":!CallNotifications.allowed(this)?"Calls are blocked in Android notification settings.":"Calls on · "+count+" callers · next around "+DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(next)));
+    }
+    private void chooseCallRecording() {
+        String[] names=new String[ContactMessages.NAMES.length];
+        for(int i=0;i<names.length;i++) names[i]=ContactMessages.NAMES[i]+(CallClips.available(this,i)?" · recording ready":" · add recording");
+        new AlertDialog.Builder(this).setTitle("Callers & voice recordings").setItems(names,(d,index) -> {
+            boolean enabled=CallScheduler.prefs(this).getBoolean("contact_"+ContactMessages.IDS[index],true);
+            new AlertDialog.Builder(this).setTitle(ContactMessages.NAMES[index]).setItems(new String[]{"Import voice recording",enabled?"Disable caller":"Enable caller","Remove imported recording"},(dialog,choice) -> {
+                if(choice==0) { importContact=index; startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("audio/*").addCategory(Intent.CATEGORY_OPENABLE),42); }
+                else if(choice==1) CallScheduler.prefs(this).edit().putBoolean("contact_"+ContactMessages.IDS[index],!enabled).commit();
+                else new java.io.File(getFilesDir(),"call-"+ContactMessages.IDS[index]+".audio").delete();
+                refreshCalls();
+            }).setNegativeButton("Cancel",null).show();
+        }).setNegativeButton("Close",null).show();
+    }
+    @Override protected void onSaveInstanceState(Bundle state) { state.putInt("import_contact",importContact); super.onSaveInstanceState(state); }
+    @Override protected void onActivityResult(int code,int result,Intent data) {
+        super.onActivityResult(code,result,data);
+        if(code!=42 || result!=RESULT_OK || data==null || data.getData()==null || importContact<0) return;
+        int contact=importContact; Uri uri=data.getData(); importContact=-1;
+        new Thread(() -> {
+            String message;
+            try { CallClips.importClip(getApplicationContext(),contact,uri); message="Voice recording saved"; }
+            catch(Exception e) { message="Choose a playable audio recording under 20 MB and 5 minutes"; }
+            final String outcome=message;
+            runOnUiThread(() -> { if(!isDestroyed()) { Toast.makeText(this,outcome,Toast.LENGTH_LONG).show(); refreshCalls(); } });
+        },"import-call-audio").start();
     }
     private void saveIntervals() {
         try {
@@ -378,6 +465,7 @@ public final class MainActivity extends Activity {
     }
     private void refreshState() {
         refreshContacts();
+        refreshCalls();
         if (enabledSwitch == null) return;
         SharedPreferences p = RequestScheduler.prefs(this);
         boolean enabled = RequestScheduler.enabled(this), allowed = SimeonNotifications.allowed(this);

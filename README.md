@@ -9,7 +9,7 @@ Your contacts have a job for you. Again.
 A native Android fan app with **20 contacts** and the GTA notification chime.
 Simeon's 16 vehicle lists remain available. Added messages are verified in-game
 phone texts or emails: heist/planning reminders, purchase offers, and introductions.
-Longer messages use exact short excerpts; no call dialogue is included.
+Longer messages use exact short excerpts. Optional simulated calls replay original character voice recordings.
 Messages are simulated offline with no live game connection.
 See [SOURCES.md](SOURCES.md) for provenance.
 
@@ -31,6 +31,11 @@ Requires Android 8 or newer. The release APK uses the same package and signing
 certificate as earlier personal releases, so it can update those installations.
 
 ## Features
+
+- Optional incoming calls, **off by default**, with a separate 30–60-minute timer.
+- Bundled GTA phone ringtone, Answer/Decline controls, and automatic hang-up after the caller's recording. No microphone or real phone calls.
+- Original voiced clips for **Simeon, Pavel, Lester, Tony, Ron, Franklin, Lamar, and Gerald**. Lester has two recordings. Import a local recording for any other contact or replace a bundled voice.
+- Independent caller toggles, call intervals, and Android ringtone settings. On Android 14+, **Incoming call screen access** optionally allows the call screen over the lock screen; the notification still works without that access.
 
 - Random **30–60-minute** waits by default; adjustable from 15 to 1,440 minutes.
 - All **16 documented English request texts**, shuffled without immediate repeats.
@@ -64,6 +69,14 @@ Android can delay alarms and jobs under power restrictions. A force-stopped or
 hibernated app cannot run until Android permits it again. Reopen after a force stop.
 Notifications run throughout the day and night. Android silent mode, notification
 volume, and Do Not Disturb still apply.
+
+## Simulated calls
+
+Open **Phone calls** and turn on **Let contacts call you**. Notifications and calls keep separate schedules and switches. Both interval ranges accept 15–1,440 minutes. Use **Test a phone call** to preview a caller even when scheduled calls are off.
+
+Answering stops the ringtone and plays a local character recording, then hangs up automatically. Talking does nothing: the app has no microphone permission. Decline or Hang up stops the call immediately. Unanswered calls stop after 45 seconds. Android sound volume, Do Not Disturb, notification access, and background restrictions apply.
+
+Eight callers ship with original game voice recordings. These are simulated calls: some recordings are character quotes originally spoken in person, and Lester's recordings are actual phone dialogue. See [voice sources](SOURCES.md#voice-recordings-v17). Contacts without a recording cannot call until you add one under **Callers & voice recordings**. Imported audio stays inside the app, replaces that contact's bundled audio, and must be playable, under 20 MB, and at most five minutes long. Removing an import restores the bundled recording if available.
 
 ## Phone contact icons
 
