@@ -59,4 +59,3 @@ public final class NativeCallService extends ConnectionService {
         }
     }
 }
-

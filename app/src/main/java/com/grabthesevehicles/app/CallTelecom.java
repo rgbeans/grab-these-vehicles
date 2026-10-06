@@ -39,6 +39,3 @@ public final class CallTelecom {
     static synchronized void detach(String token) { connections.remove(token); }
     static synchronized void end(String token,int cause) { NativeCallService.GtaConnection connection=connections.remove(token); if(connection!=null) connection.complete(cause); }
 }
-
-
-

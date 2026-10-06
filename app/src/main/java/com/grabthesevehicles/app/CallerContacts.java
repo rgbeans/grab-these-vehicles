@@ -71,5 +71,3 @@ public final class CallerContacts {
         CallScheduler.prefs(c).edit().remove("native_contacts_ready").remove("enable_after_setup").commit();
     }
 }
-
-
