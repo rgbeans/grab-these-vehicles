@@ -26,9 +26,9 @@ public final class CallActivity extends Activity {
         int contact=CallScheduler.prefs(this).getInt("active_contact",0);
         LinearLayout root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setGravity(Gravity.CENTER); root.setPadding(40,80,40,80); root.setBackgroundColor(Color.rgb(16,16,20));
         root.setOnApplyWindowInsetsListener((v,insets)-> { v.setPadding(40,insets.getSystemWindowInsetTop()+40,40,insets.getSystemWindowInsetBottom()+40); return insets; });
-        int icon=ContactIcons.resource(contact);
+        int icon=CallContacts.icon(contact);
         if(icon!=0) { ImageView portrait=new ImageView(this); portrait.setImageResource(icon); root.addView(portrait,new LinearLayout.LayoutParams(dp(140),dp(140))); }
-        TextView name=new TextView(this); name.setText(ContactMessages.NAMES[contact]); name.setTextColor(Color.WHITE); name.setTextSize(30); name.setGravity(Gravity.CENTER); name.setPadding(0,32,0,24); root.addView(name);
+        TextView name=new TextView(this); name.setText(CallContacts.NAMES[contact]); name.setTextColor(Color.WHITE); name.setTextSize(30); name.setGravity(Gravity.CENTER); name.setPadding(0,32,0,24); root.addView(name);
         status=new TextView(this); status.setTextColor(Color.rgb(255,176,71)); status.setTextSize(19); status.setPadding(0,0,0,40); root.addView(status);
         TextView hint=new TextView(this); hint.setText("Simulated call · your microphone is off"); hint.setTextColor(Color.LTGRAY); hint.setPadding(0,0,0,40); root.addView(hint);
         answer=new Button(this); answer.setText("Answer"); answer.setOnClickListener(v -> pickUp()); root.addView(answer,new LinearLayout.LayoutParams(-1,dp(56)));

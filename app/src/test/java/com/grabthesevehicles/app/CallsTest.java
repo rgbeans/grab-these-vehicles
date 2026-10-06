@@ -47,7 +47,7 @@ public class CallsTest {
         assertNotNull(app.getSystemService(android.app.job.JobScheduler.class).getPendingJob(CallScheduler.RECOVERY_JOB));
     }
     @Test public void bundledCallersMatchTheirOwnVoicesAndUseCustomRingtone() {
-        assertEquals(8,CallClips.callers(app).size());
+        assertEquals(24,CallClips.callers(app).size());
         assertFalse(CallClips.available(app,1)); // Warstock has no invented voice.
         assertTrue(CallNotifications.ring(app,3)); // Lester
         assertFalse(CallNotifications.ring(app,0)); // Only one call at a time.
@@ -57,6 +57,40 @@ public class CallsTest {
         assertEquals(45_000,manager.getActiveNotifications()[0].getNotification().getTimeoutAfter());
         CallNotifications.end(app,null);
         assertEquals(0,manager.getActiveNotifications().length);
+    }
+    @Test public void everyBundledCallHasVerifiedCallerAndSource() throws Exception {
+        assertEquals(ContactMessages.IDS.length,20);
+        for(int i=0;i<ContactMessages.IDS.length;i++) assertEquals(ContactMessages.IDS[i],CallContacts.IDS[i]);
+        org.json.JSONArray catalog;
+        try(java.io.InputStream input=app.getAssets().open("call_catalog.json")) {
+            java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();
+            byte[] buffer=new byte[4096]; int n; while((n=input.read(buffer))!=-1) bytes.write(buffer,0,n);
+            catalog=new org.json.JSONArray(bytes.toString("UTF-8"));
+        }
+        java.util.Set<Integer> documented=new java.util.HashSet<>();
+        java.util.Set<String> callers=new java.util.HashSet<>();
+        for(int i=0;i<catalog.length();i++) {
+            org.json.JSONObject row=catalog.getJSONObject(i);
+            String caller=row.getString("caller"),resource=row.getString("resource");
+            assertTrue(resource.startsWith("call_"+caller+"_"));
+            assertTrue(java.util.Arrays.asList(CallContacts.IDS).contains(caller));
+            assertEquals("introductory_or_work_offer_phone_call",row.getString("kind"));
+            assertTrue(row.getString("source").startsWith("https://www.youtube.com/watch?v="));
+            assertFalse(row.getString("context").isEmpty());
+            int id=R.raw.class.getField(resource).getInt(null); assertTrue(documented.add(id)); callers.add(caller);
+            java.security.MessageDigest digest=java.security.MessageDigest.getInstance("SHA-256");
+            try(java.io.InputStream input=app.getResources().openRawResource(id)) {
+                byte[] buffer=new byte[4096]; int n; while((n=input.read(buffer))!=-1) digest.update(buffer,0,n);
+            }
+            StringBuilder hash=new StringBuilder(); for(byte b:digest.digest()) hash.append(String.format("%02x",b&255));
+            assertEquals(row.getString("sha256"),hash.toString());
+        }
+        assertEquals(24,callers.size());
+        for(java.lang.reflect.Field field:R.raw.class.getFields()) if(field.getName().startsWith("call_")) assertTrue(documented.contains(field.getInt(null)));
+        for(String removed:new String[]{"call_franklin","call_gerald","call_lamar","call_lester_fleeca","call_lester_ljt","call_pavel","call_ron","call_simeon","call_tony"}) {
+            try { R.raw.class.getField(removed); fail("Rejected recording still bundled: "+removed); }
+            catch(NoSuchFieldException expected) {}
+        }
     }
     @Test public void notificationContactTogglesDoNotDisableCallers() {
         RequestScheduler.prefs(app).edit().putBoolean("contact_lester",false).commit();

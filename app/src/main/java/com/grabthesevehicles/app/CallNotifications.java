@@ -41,18 +41,18 @@ public final class CallNotifications {
         return PendingIntent.getActivity(c,answer?24:23,new Intent(c,CallActivity.class).setAction(answer?"answer":"view").setData(android.net.Uri.parse("gtv-call:"+token)).putExtra("token",token).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
     }
     public static synchronized boolean ring(Context c,int contact) {
-        if(contact<0 || contact>=ContactMessages.IDS.length || !CallClips.available(c,contact) || !allowed(c) || active(c) || CallPlaybackService.running) return false;
+        if(contact<0 || contact>=CallContacts.IDS.length || !CallClips.available(c,contact) || !allowed(c) || active(c) || CallPlaybackService.running) return false;
         end(c,null); channels(c);
         String token=UUID.randomUUID().toString(); long until=SystemClock.elapsedRealtime()+45_000;
         CallScheduler.prefs(c).edit().putString("active_token",token).putString("active_phase","ringing").putInt("active_contact",contact).putInt("active_boot",CallScheduler.bootCount(c)).putLong("active_until",until).commit();
         PendingIntent decline=timeout(c,token), answer=screen(c,token,true), open=screen(c,token,false);
-        Notification.Builder b=new Notification.Builder(c,CHANNEL).setSmallIcon(R.drawable.ic_message).setContentTitle(ContactMessages.NAMES[contact])
+        Notification.Builder b=new Notification.Builder(c,CHANNEL).setSmallIcon(R.drawable.ic_message).setContentTitle(CallContacts.NAMES[contact])
             .setContentText("Incoming simulated call").setCategory(Notification.CATEGORY_CALL).setContentIntent(open).setDeleteIntent(decline)
             .setVisibility(Notification.VISIBILITY_PUBLIC).setColor(Color.rgb(255,176,71)).setTimeoutAfter(45_000);
-        int icon=ContactIcons.resource(contact);
+        int icon=CallContacts.icon(contact);
         if(icon!=0) b.setLargeIcon(Icon.createWithResource(c,icon));
         if(Build.VERSION.SDK_INT>=31) {
-            Person.Builder person=new Person.Builder().setName(ContactMessages.NAMES[contact]).setImportant(true);
+            Person.Builder person=new Person.Builder().setName(CallContacts.NAMES[contact]).setImportant(true);
             if(icon!=0) person.setIcon(Icon.createWithResource(c,icon));
             b.setStyle(Notification.CallStyle.forIncomingCall(person.build(),decline,answer));
         } else { b.addAction(new Notification.Action.Builder(null,"Decline",decline).build()); b.addAction(new Notification.Action.Builder(null,"Answer",answer).build()); }
@@ -85,7 +85,7 @@ public final class CallNotifications {
     }
     static Notification playing(Context c,String token,int contact) {
         channels(c);
-        return new Notification.Builder(c,PLAYBACK).setSmallIcon(R.drawable.ic_message).setContentTitle(ContactMessages.NAMES[contact])
+        return new Notification.Builder(c,PLAYBACK).setSmallIcon(R.drawable.ic_message).setContentTitle(CallContacts.NAMES[contact])
             .setContentText("Playing call recording").setContentIntent(screen(c,token,false)).setOngoing(true).setOnlyAlertOnce(true)
             .setCategory(Notification.CATEGORY_SERVICE).addAction(new Notification.Action.Builder(null,"Hang up",timeout(c,token)).build()).build();
     }

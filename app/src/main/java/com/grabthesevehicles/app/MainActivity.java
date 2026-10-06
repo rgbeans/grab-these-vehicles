@@ -335,7 +335,7 @@ public final class MainActivity extends Activity {
             if (checked && !CallNotifications.allowed(this)) askNotificationAccess(false);
             refreshCalls();
         });
-        root.addView(text("Off by default. Calls have their own timer and ringtone. Eight callers include original character voice clips; add recordings for others. Answer to hear the caller, then the call ends. Your microphone is never used.",13,MUTED,false));
+        root.addView(text("Off by default. Calls have their own timer and ringtone. Original GTA Online calls offer work, businesses, and missions. Answer to hear the caller, then the call ends. Your microphone is never used.",13,MUTED,false));
         callsStatus=text("",13,MUTED,false); space(root,8); root.addView(callsStatus); space(root,16);
         root.addView(text("CALL INTERVAL · MINUTES",11,MUTED,true));
         SharedPreferences p=CallScheduler.prefs(this);
@@ -361,7 +361,7 @@ public final class MainActivity extends Activity {
         test.setOnClickListener(v -> {
             java.util.List<Integer> callers=CallClips.callers(this);
             if(callers.size()==0) { Toast.makeText(this,"Enable a caller with a voice recording first",Toast.LENGTH_LONG).show(); return; }
-            String[] names=new String[callers.size()]; for(int i=0;i<names.length;i++) names[i]=ContactMessages.NAMES[callers.get(i)];
+            String[] names=new String[callers.size()]; for(int i=0;i<names.length;i++) names[i]=CallContacts.NAMES[callers.get(i)];
             new AlertDialog.Builder(this).setTitle("Who should call?").setItems(names,(d,i) -> {
                 if(!CallNotifications.ring(this,callers.get(i))) Toast.makeText(this,"Allow call notifications and finish any active call",Toast.LENGTH_LONG).show();
             }).setNegativeButton("Cancel",null).show();
@@ -381,14 +381,14 @@ public final class MainActivity extends Activity {
         callsStatus.setText(!enabled?"Calls are off.":count==0?"No caller recordings enabled.":!CallNotifications.allowed(this)?"Calls are blocked in Android notification settings.":"Calls on · "+count+" callers · next around "+DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(next)));
     }
     private void chooseCallRecording() {
-        String[] names=new String[ContactMessages.NAMES.length];
-        for(int i=0;i<names.length;i++) names[i]=ContactMessages.NAMES[i]+(CallClips.available(this,i)?" · recording ready":" · add recording");
+        String[] names=new String[CallContacts.NAMES.length];
+        for(int i=0;i<names.length;i++) names[i]=CallContacts.NAMES[i]+(CallClips.available(this,i)?" · recording ready":" · add recording");
         new AlertDialog.Builder(this).setTitle("Callers & voice recordings").setItems(names,(d,index) -> {
-            boolean enabled=CallScheduler.prefs(this).getBoolean("contact_"+ContactMessages.IDS[index],true);
-            new AlertDialog.Builder(this).setTitle(ContactMessages.NAMES[index]).setItems(new String[]{"Import voice recording",enabled?"Disable caller":"Enable caller","Remove imported recording"},(dialog,choice) -> {
+            boolean enabled=CallScheduler.prefs(this).getBoolean("contact_"+CallContacts.IDS[index],true);
+            new AlertDialog.Builder(this).setTitle(CallContacts.NAMES[index]).setItems(new String[]{"Import voice recording",enabled?"Disable caller":"Enable caller","Remove imported recording"},(dialog,choice) -> {
                 if(choice==0) { importContact=index; startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("audio/*").addCategory(Intent.CATEGORY_OPENABLE),42); }
-                else if(choice==1) CallScheduler.prefs(this).edit().putBoolean("contact_"+ContactMessages.IDS[index],!enabled).commit();
-                else new java.io.File(getFilesDir(),"call-"+ContactMessages.IDS[index]+".audio").delete();
+                else if(choice==1) CallScheduler.prefs(this).edit().putBoolean("contact_"+CallContacts.IDS[index],!enabled).commit();
+                else new java.io.File(getFilesDir(),"call-"+CallContacts.IDS[index]+".audio").delete();
                 refreshCalls();
             }).setNegativeButton("Cancel",null).show();
         }).setNegativeButton("Close",null).show();

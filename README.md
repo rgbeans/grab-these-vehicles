@@ -34,7 +34,7 @@ certificate as earlier personal releases, so it can update those installations.
 
 - Optional incoming calls, **off by default**, with a separate 30–60-minute timer.
 - Bundled GTA phone ringtone, Answer/Decline controls, and automatic hang-up after the caller's recording. No microphone or real phone calls.
-- Original voiced clips for **Simeon, Pavel, Lester, Tony, Ron, Franklin, Lamar, and Gerald**. Lester has two recordings. Import a local recording for any other contact or replace a bundled voice.
+- **31 genuine GTA Online phone calls from 24 callers**, offering missions, businesses, and services. Import a local recording or replace a bundled voice.
 - Independent caller toggles, call intervals, and Android ringtone settings. On Android 14+, **Incoming call screen access** optionally allows the call screen over the lock screen; the notification still works without that access.
 
 - Random **30–60-minute** waits by default; adjustable from 15 to 1,440 minutes.
@@ -76,7 +76,7 @@ Open **Phone calls** and turn on **Let contacts call you**. Notifications and ca
 
 Answering stops the ringtone and plays a local character recording, then hangs up automatically. Talking does nothing: the app has no microphone permission. Decline or Hang up stops the call immediately. Unanswered calls stop after 45 seconds. Android sound volume, Do Not Disturb, notification access, and background restrictions apply.
 
-Eight callers ship with original game voice recordings. These are simulated calls: some recordings are character quotes originally spoken in person, and Lester's recordings are actual phone dialogue. See [voice sources](SOURCES.md#voice-recordings-v17). Contacts without a recording cannot call until you add one under **Callers & voice recordings**. Imported audio stays inside the app, replaces that contact's bundled audio, and must be playable, under 20 MB, and at most five minutes long. Removing an import restores the bundled recording if available.
+31 genuine in-game phone calls ship for 24 callers: Simeon, Pavel, Lester, Tony, KDJ, Agent 14, Bryony, Ron, Maude, Franklin, Lamar, Gerald, Paige, Dom, Brucie, English Dave, Martin Madrazo, Raf, both Executive Assistants, Mechanic, Mors Mutual, Pegasus, and Merryweather. Calls offer work, introduce businesses and services, or invite you to missions. Some are historical call variants. Gameplay recordings may retain quiet game ambience. See [voice sources](SOURCES.md#voice-recordings-v171) and the [recording catalog](app/src/main/assets/call_catalog.json). The six message senders without a verified matching call remain available for local imports; nobody else's voice is assigned to them. Imported audio stays inside the app, replaces that contact's bundled audio, and must be playable, under 20 MB, and at most five minutes long. Removing an import restores the bundled recording if available.
 
 ## Phone contact icons
 

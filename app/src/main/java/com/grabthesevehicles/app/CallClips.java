@@ -12,11 +12,11 @@ import java.util.*;
 public final class CallClips {
     private CallClips() {}
     static File file(Context c, int contact) {
-        return new File(c.getFilesDir(), "call-" + ContactMessages.IDS[contact] + ".audio");
+        return new File(c.getFilesDir(), "call-" + CallContacts.IDS[contact] + ".audio");
     }
     static List<Integer> resources(int contact) {
         List<Integer> result = new ArrayList<>();
-        String prefix = "call_" + ContactMessages.IDS[contact];
+        String prefix = "call_" + CallContacts.IDS[contact];
         for (java.lang.reflect.Field field : R.raw.class.getFields()) {
             if (field.getName().equals(prefix) || field.getName().startsWith(prefix + "_")) {
                 try { result.add(field.getInt(null)); } catch (IllegalAccessException ignored) {}
@@ -29,8 +29,8 @@ public final class CallClips {
     }
     public static List<Integer> callers(Context c) {
         List<Integer> result = new ArrayList<>();
-        for (int i=0;i<ContactMessages.IDS.length;i++)
-            if (CallScheduler.prefs(c).getBoolean("contact_"+ContactMessages.IDS[i],true) && available(c,i)) result.add(i);
+        for (int i=0;i<CallContacts.IDS.length;i++)
+            if (CallScheduler.prefs(c).getBoolean("contact_"+CallContacts.IDS[i],true) && available(c,i)) result.add(i);
         return result;
     }
     static void configure(Context c, int contact, MediaPlayer player) throws IOException {

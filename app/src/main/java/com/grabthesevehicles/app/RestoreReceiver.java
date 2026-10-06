@@ -14,6 +14,7 @@ public final class RestoreReceiver extends BroadcastReceiver {
         } else if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)
             || Intent.ACTION_TIME_CHANGED.equals(action) || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
             || "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED".equals(action)) {
+            if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) CallNotifications.end(context,null);
             RequestScheduler.restore(context);
             CallScheduler.restore(context);
         }
