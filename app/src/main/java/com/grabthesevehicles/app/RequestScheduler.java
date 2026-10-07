@@ -16,6 +16,7 @@ import java.util.Random;
 public final class RequestScheduler {
     public static final String ACTION = "com.grabthesevehicles.app.DELIVER_REQUEST";
     static final int RECOVERY_JOB = 701;
+    static final int DEADLINE_JOB = 703;
     private static final Random RANDOM = new Random();
     private RequestScheduler() {}
 
@@ -23,6 +24,15 @@ public final class RequestScheduler {
         return c.getSharedPreferences("simeon", Context.MODE_PRIVATE);
     }
     public static boolean enabled(Context c) { return prefs(c).getBoolean("enabled", false); }
+    public static void initialize(Context c) {
+        if (!prefs(c).contains("enabled")) prefs(c).edit().putBoolean("enabled", true).commit();
+    }
+    /** Confirm first setup automatically once Android allows notifications; never overrides Pause. */
+    public static synchronized void completeSetup(Context c) {
+        ensureScheduled(c);
+        if (enabled(c) && !prefs(c).contains("last_message") && hasContacts(c) && SimeonNotifications.deliver(c)
+            && prefs(c).getLong("next_elapsed",0) <= SystemClock.elapsedRealtime()) scheduleNew(c);
+    }
     public static boolean exactAllowed(Context c) {
         return Build.VERSION.SDK_INT < 31 || c.getSystemService(AlarmManager.class).canScheduleExactAlarms();
     }
@@ -33,6 +43,7 @@ public final class RequestScheduler {
     public static void cancel(Context c) {
         c.getSystemService(AlarmManager.class).cancel(alarmIntent(c));
         c.getSystemService(JobScheduler.class).cancel(RECOVERY_JOB);
+        c.getSystemService(JobScheduler.class).cancel(DEADLINE_JOB);
         prefs(c).edit().remove("next_at").remove("next_elapsed").remove("scheduled_boot")
             .remove("scheduled_exact").commit();
     }
@@ -51,6 +62,7 @@ public final class RequestScheduler {
         ensureScheduled(c);
     }
     public static void restoreAfterBoot(Context c) {
+        initialize(c);
         if (!enabled(c)) { cancel(c); return; }
         // Uptime starts again after a reboot. Preserve a future request time or draw a new wait.
         long remaining = prefs(c).getLong("next_at", 0) - System.currentTimeMillis();
@@ -58,6 +70,7 @@ public final class RequestScheduler {
         else scheduleAtElapsed(c, SystemClock.elapsedRealtime() + Math.min(remaining, 86_400_000L));
     }
     public static void ensureScheduled(Context c) {
+        initialize(c);
         if (!enabled(c)) { cancel(c); return; }
         SharedPreferences p = prefs(c);
         long elapsed = p.getLong("next_elapsed", 0);
@@ -94,6 +107,15 @@ public final class RequestScheduler {
             .putLong("next_at", System.currentTimeMillis() + elapsed - SystemClock.elapsedRealtime())
             .putBoolean("scheduled_exact", exact).commit();
         JobScheduler jobs = c.getSystemService(JobScheduler.class);
+        JobInfo backup = jobs.getPendingJob(DEADLINE_JOB);
+        if (backup == null || backup.getExtras().getLong("deadline", -1) != elapsed
+            || backup.getExtras().getInt("boot", -1) != bootCount(c)) {
+            android.os.PersistableBundle extras = new android.os.PersistableBundle();
+            extras.putLong("deadline", elapsed); extras.putInt("boot", bootCount(c));
+            long delay = Math.max(0, elapsed - SystemClock.elapsedRealtime());
+            jobs.schedule(new JobInfo.Builder(DEADLINE_JOB, new ComponentName(c, RecoveryJobService.class))
+                .setMinimumLatency(delay).setOverrideDeadline(delay + 60_000).setExtras(extras).setPersisted(true).build());
+        }
         if (jobs.getPendingJob(RECOVERY_JOB) == null) {
             jobs.schedule(new JobInfo.Builder(RECOVERY_JOB, new ComponentName(c, RecoveryJobService.class))
                 .setPeriodic(3_600_000L).setPersisted(true).build());

@@ -53,7 +53,7 @@ public final class MainActivity extends Activity {
     private boolean updating, testAfterPermission;
     private final Handler handler = new Handler();
     private final Runnable refresh = new Runnable() {
-        @Override public void run() { refreshState(); handler.postDelayed(this, 30_000); }
+        @Override public void run() { RequestScheduler.completeSetup(MainActivity.this); CallScheduler.ensureScheduled(MainActivity.this); refreshState(); handler.postDelayed(this, 30_000); }
     };
 
     @Override public void onCreate(Bundle state) {
@@ -62,7 +62,7 @@ public final class MainActivity extends Activity {
         SimeonNotifications.createChannel(this);
         SharedPreferences prefs = RequestScheduler.prefs(this);
         boolean firstOpen = !prefs.contains("enabled");
-        if (firstOpen) prefs.edit().putBoolean("enabled", true).commit();
+        RequestScheduler.initialize(this);
         buildScreen();
         if (firstOpen && Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 20);
@@ -493,6 +493,7 @@ public final class MainActivity extends Activity {
         if (code == 20) {
             boolean send = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED && testAfterPermission;
             testAfterPermission = false;
+            RequestScheduler.completeSetup(this);
             if (send) sendTest();
             refreshState();
         }

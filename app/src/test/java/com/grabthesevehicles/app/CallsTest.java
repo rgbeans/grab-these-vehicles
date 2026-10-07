@@ -152,6 +152,25 @@ public class CallsTest {
         ringing("oldboot"); CallScheduler.prefs(app).edit().putInt("active_boot",-1).commit();
         assertFalse(CallNotifications.answer(app,"oldboot"));
     }
+    @Test public void callDeadlineBackupIsIndependentAndCanceledWhenOff() {
+        RequestScheduler.setEnabled(app,true);
+        long notificationDeadline=RequestScheduler.prefs(app).getLong("next_elapsed",0);
+        CallScheduler.setEnabled(app,true);
+        android.app.job.JobScheduler jobs=app.getSystemService(android.app.job.JobScheduler.class);
+        android.app.job.JobInfo job=jobs.getPendingJob(CallScheduler.DEADLINE_JOB);
+        assertNotNull(job); assertTrue(job.isPersisted());
+        assertEquals(CallScheduler.prefs(app).getLong("next_elapsed",0),job.getExtras().getLong("deadline"));
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofMinutes(2));
+        CallScheduler.prefs(app).edit().putLong("next_elapsed",SystemClock.elapsedRealtime()-1).commit();
+        RecoveryJobService.recover(app,CallScheduler.DEADLINE_JOB);
+        long next=CallScheduler.prefs(app).getLong("next_elapsed",0);
+        assertTrue(next>SystemClock.elapsedRealtime());
+        assertEquals(notificationDeadline,RequestScheduler.prefs(app).getLong("next_elapsed",0));
+        new CallReceiver().onReceive(app,new Intent(CallScheduler.ACTION));
+        assertEquals(next,CallScheduler.prefs(app).getLong("next_elapsed",0));
+        CallScheduler.setEnabled(app,false);
+        assertNull(jobs.getPendingJob(CallScheduler.DEADLINE_JOB));
+    }
     @Test public void ringtoneIsReadOnlyAndPrivateRecordingsAreNotExposed() throws Exception {
         assertEquals("audio/mpeg",app.getContentResolver().getType(SoundProvider.RINGTONE_URI));
         try(java.io.InputStream input=app.getContentResolver().openInputStream(SoundProvider.RINGTONE_URI)) {

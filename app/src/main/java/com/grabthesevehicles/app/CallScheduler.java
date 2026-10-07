@@ -16,6 +16,7 @@ import java.util.Random;
 public final class CallScheduler {
     public static final String ACTION = "com.grabthesevehicles.app.DELIVER_CALL";
     static final int RECOVERY_JOB = 702;
+    static final int DEADLINE_JOB = 704;
     private static final Random RANDOM = new Random();
     private CallScheduler() {}
 
@@ -33,6 +34,7 @@ public final class CallScheduler {
     public static void cancel(Context c) {
         c.getSystemService(AlarmManager.class).cancel(alarmIntent(c));
         c.getSystemService(JobScheduler.class).cancel(RECOVERY_JOB);
+        c.getSystemService(JobScheduler.class).cancel(DEADLINE_JOB);
         prefs(c).edit().remove("next_at").remove("next_elapsed").remove("scheduled_boot")
             .remove("scheduled_exact").commit();
     }
@@ -94,6 +96,15 @@ public final class CallScheduler {
             .putLong("next_at", System.currentTimeMillis() + elapsed - SystemClock.elapsedRealtime())
             .putBoolean("scheduled_exact", exact).commit();
         JobScheduler jobs = c.getSystemService(JobScheduler.class);
+        JobInfo backup = jobs.getPendingJob(DEADLINE_JOB);
+        if (backup == null || backup.getExtras().getLong("deadline", -1) != elapsed
+            || backup.getExtras().getInt("boot", -1) != bootCount(c)) {
+            android.os.PersistableBundle extras = new android.os.PersistableBundle();
+            extras.putLong("deadline", elapsed); extras.putInt("boot", bootCount(c));
+            long delay = Math.max(0, elapsed - SystemClock.elapsedRealtime());
+            jobs.schedule(new JobInfo.Builder(DEADLINE_JOB, new ComponentName(c, RecoveryJobService.class))
+                .setMinimumLatency(delay).setOverrideDeadline(delay + 60_000).setExtras(extras).setPersisted(true).build());
+        }
         if (jobs.getPendingJob(RECOVERY_JOB) == null) {
             jobs.schedule(new JobInfo.Builder(RECOVERY_JOB, new ComponentName(c, RecoveryJobService.class))
                 .setPeriodic(3_600_000L).setPersisted(true).build());

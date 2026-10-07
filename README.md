@@ -51,13 +51,14 @@ certificate as earlier personal releases, so it can update those installations.
   contact's notification and alert again according to Android's sound settings.
 - Original phone portraits and company icons in notifications and contact settings.
   Prix Luxury has no verified phone icon in this catalog and shows no avatar.
-- Elapsed-time alarms, reboot restoration, and hourly background alarm recovery.
+- Automatic first notification after permission is granted; no test button is required to start scheduling.
+- Elapsed-time alarms, a persisted backup job for each deadline, reboot restoration, and hourly background alarm recovery.
 - Background, battery, unused-app, and privacy guidance in the app.
 
 ## One-time setup
 
 1. Install the release APK and open the app once.
-2. Allow notifications and send a test notification.
+2. Allow notifications. The app sends its first message automatically and starts the schedule. Test notifications are optional.
 3. For more reliable timing on Android 12+, use **Improve timing** to allow
    **Alarms & reminders**. Approximate scheduling works without that access.
 4. On Android 11+, use **Unused-app settings** and disable **Pause app activity
@@ -69,6 +70,8 @@ Android can delay alarms and jobs under power restrictions. A force-stopped or
 hibernated app cannot run until Android permits it again. Reopen after a force stop.
 Notifications run throughout the day and night. Android silent mode, notification
 volume, and Do Not Disturb still apply.
+
+Schedules restore automatically after reboot or an app update. Missing alarms and backup jobs are repaired when the app opens, during foreground refreshes, and by the hourly recovery job. A persisted deadline job can deliver an overdue event if its alarm is lost; duplicate alarm/job deliveries are ignored. Pausing cancels both scheduling methods. Android requires opening a newly installed app once before it can receive boot broadcasts; notification permission still requires your approval. Recovery jobs and alarms remain subject to Android's background restrictions.
 
 ## Simulated calls
 

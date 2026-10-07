@@ -43,6 +43,7 @@ public class ControlsTest {
     }
 
     @Test public void previewIsNotPresentedAsACopyableLastMessage() {
+        Shadows.shadowOf(app).denyPermissions(Manifest.permission.POST_NOTIFICATIONS);
         try(ActivityController<MainActivity> activity=Robolectric.buildActivity(MainActivity.class).setup()) {
             View card=(View)findText(activity.get().getWindow().getDecorView(),VehicleMessages.preview()).getParent();
             assertFalse(card.isClickable());

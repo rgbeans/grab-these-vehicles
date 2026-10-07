@@ -30,6 +30,7 @@ public class RecoveryTest {
         app=RuntimeEnvironment.getApplication();
         alarms=app.getSystemService(AlarmManager.class);
         RequestScheduler.prefs(app).edit().clear().commit();
+        CallScheduler.prefs(app).edit().clear().commit();
         Shadows.shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
     }
 
@@ -87,6 +88,7 @@ public class RecoveryTest {
         RequestScheduler.setEnabled(app,false);
         assertTrue(Shadows.shadowOf(alarms).getScheduledAlarms().isEmpty());
         assertNull(app.getSystemService(JobScheduler.class).getPendingJob(RequestScheduler.RECOVERY_JOB));
+        assertNull(app.getSystemService(JobScheduler.class).getPendingJob(RequestScheduler.DEADLINE_JOB));
         RequestScheduler.ensureScheduled(app);
         assertTrue(Shadows.shadowOf(alarms).getScheduledAlarms().isEmpty());
     }
@@ -102,6 +104,48 @@ public class RecoveryTest {
         assertTrue(Math.abs(wall-RequestScheduler.nextWallTime(app))<2000);
     }
 
+    @Test public void missingScheduleIsCreatedWithoutTestNotification() {
+        RequestScheduler.ensureScheduled(app);
+        assertTrue(RequestScheduler.enabled(app));
+        assertTrue(RequestScheduler.prefs(app).getLong("next_elapsed",0)>SystemClock.elapsedRealtime());
+        assertNotNull(app.getSystemService(JobScheduler.class).getPendingJob(RequestScheduler.DEADLINE_JOB));
+    }
+    @Test public void deadlineBackupIsPersistedAndRepairsMissingJob() {
+        RequestScheduler.setEnabled(app,true);
+        long deadline=RequestScheduler.prefs(app).getLong("next_elapsed",0);
+        JobScheduler jobs=app.getSystemService(JobScheduler.class);
+        JobInfo job=jobs.getPendingJob(RequestScheduler.DEADLINE_JOB);
+        assertTrue(job.isPersisted()); assertFalse(job.isPeriodic());
+        assertEquals(deadline,job.getExtras().getLong("deadline"));
+        jobs.cancel(RequestScheduler.DEADLINE_JOB);
+        RequestScheduler.ensureScheduled(app);
+        assertEquals(deadline,jobs.getPendingJob(RequestScheduler.DEADLINE_JOB).getExtras().getLong("deadline"));
+    }
+    @Test public void deadlineBackupDeliversOnceWhenAlarmIsMissing() {
+        RequestScheduler.setEnabled(app,true);
+        removeAlarmOnly();
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofMinutes(2));
+        RequestScheduler.prefs(app).edit().putLong("next_elapsed",SystemClock.elapsedRealtime()-1).commit();
+        RecoveryJobService.recover(app,RequestScheduler.DEADLINE_JOB);
+        String message=RequestScheduler.prefs(app).getString("last_message",null);
+        assertNotNull(message);
+        long next=RequestScheduler.prefs(app).getLong("next_elapsed",0);
+        assertTrue(next>SystemClock.elapsedRealtime());
+        new RequestReceiver().onReceive(app,new Intent(RequestScheduler.ACTION));
+        RecoveryJobService.recover(app,RequestScheduler.DEADLINE_JOB);
+        assertEquals(message,RequestScheduler.prefs(app).getString("last_message",null));
+        assertEquals(next,RequestScheduler.prefs(app).getLong("next_elapsed",0));
+    }
+    @Test public void rebootRebuildsAlarmAndDeadlineBackupWithoutOpeningActivity() {
+        RequestScheduler.setEnabled(app,true);
+        long wall=RequestScheduler.prefs(app).getLong("next_at",0);
+        removeAlarmOnly(); app.getSystemService(JobScheduler.class).cancel(RequestScheduler.DEADLINE_JOB);
+        Settings.Global.putInt(app.getContentResolver(),Settings.Global.BOOT_COUNT,RequestScheduler.bootCount(app)+1);
+        new RestoreReceiver().onReceive(app,new Intent(Intent.ACTION_BOOT_COMPLETED));
+        assertTrue(Math.abs(wall-RequestScheduler.nextWallTime(app))<2000);
+        assertNotNull(app.getSystemService(JobScheduler.class).getPendingJob(RequestScheduler.DEADLINE_JOB));
+        assertFalse(CallScheduler.enabled(app));
+    }
     private void removeAlarmOnly() {
         alarms.cancel(PendingIntent.getBroadcast(app,10,new Intent(app,RequestReceiver.class).setAction(RequestScheduler.ACTION),
             PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE));

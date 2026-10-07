@@ -42,6 +42,10 @@ public class AppTest {
             assertTrue(delay>=1_795_000 && delay<=3_600_000);
             assertNotNull(app.getSystemService(NotificationManager.class).getNotificationChannel(SimeonNotifications.CHANNEL));
             assertFalse(Shadows.shadowOf(app.getSystemService(AlarmManager.class)).getScheduledAlarms().isEmpty());
+            assertEquals(1,app.getSystemService(NotificationManager.class).getActiveNotifications().length);
+            String first=RequestScheduler.prefs(app).getString("last_message",null);
+            RequestScheduler.completeSetup(app);
+            assertEquals(first,RequestScheduler.prefs(app).getString("last_message",null));
         }
     }
 
@@ -62,10 +66,32 @@ public class AppTest {
             assertTrue(controller.get().isFinishing());
         }
     }
+    @Test public void firstMessageWaitsForPermissionWithoutRequiringTestButton() {
+        Shadows.shadowOf(app).denyPermissions(Manifest.permission.POST_NOTIFICATIONS);
+        try(ActivityController<MainActivity> controller=Robolectric.buildActivity(MainActivity.class).setup()) {
+            assertTrue(RequestScheduler.enabled(app));
+            assertTrue(RequestScheduler.prefs(app).getLong("next_elapsed",0)>0);
+            assertFalse(RequestScheduler.prefs(app).contains("last_message"));
+            Shadows.shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
+            controller.get().onRequestPermissionsResult(20,new String[]{Manifest.permission.POST_NOTIFICATIONS},new int[]{android.content.pm.PackageManager.PERMISSION_GRANTED});
+            assertTrue(RequestScheduler.prefs(app).contains("last_message"));
+            assertEquals(1,app.getSystemService(NotificationManager.class).getActiveNotifications().length);
+            assertFalse(CallScheduler.enabled(app));
+        }
+    }
+    @Test public void automaticSetupNeverUnpausesRequests() {
+        RequestScheduler.setEnabled(app,false);
+        RequestScheduler.completeSetup(app);
+        assertFalse(RequestScheduler.enabled(app));
+        assertFalse(RequestScheduler.prefs(app).contains("last_message"));
+        assertEquals(0,app.getSystemService(NotificationManager.class).getActiveNotifications().length);
+    }
 
     @Test public void requestsRunAfterActivityClosesAndRestoreAfterReboot() {
         ActivityController<MainActivity> controller=Robolectric.buildActivity(MainActivity.class).setup();
         controller.pause().stop().destroy();
+        app.getSystemService(NotificationManager.class).cancelAll();
+        RequestScheduler.prefs(app).edit().putLong("next_elapsed",android.os.SystemClock.elapsedRealtime()).commit();
         new RequestReceiver().onReceive(app,new Intent(RequestScheduler.ACTION));
         assertEquals(1,app.getSystemService(NotificationManager.class).getActiveNotifications().length);
         long next=RequestScheduler.prefs(app).getLong("next_at",0);
@@ -76,7 +102,7 @@ public class AppTest {
         assertTrue(Shadows.shadowOf(alarms).getScheduledAlarms().isEmpty());
         new RestoreReceiver().onReceive(app,new Intent(Intent.ACTION_BOOT_COMPLETED));
         assertFalse(Shadows.shadowOf(alarms).getScheduledAlarms().isEmpty());
-        assertEquals(next,RequestScheduler.prefs(app).getLong("next_at",0));
+        assertTrue(Math.abs(next-RequestScheduler.prefs(app).getLong("next_at",0))<2000);
     }
 
     @Test public void pausedOrBlockedRequestsDoNotDeliver() {
